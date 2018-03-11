@@ -26,7 +26,9 @@ ZhihuLink 启动时能自动读取其中的 cookies.
 
 ## 备注
 
-原则上 cookies 是无法自动获取的, 因为出于安全因素考虑, cookies 等同于账号密码, 如果网页被挂马, cookies 被拦截发送到黑客手里就太可怕了.
+**原则上** cookies 是无法自动获取的, 因为出于安全因素考虑, cookies 等同于账号密码
+
+如果网页被挂马, cookies 被拦截发送到黑客手里就太可怕了.
 
 所以一些重要的 cookies 是无法通过 javascript 命令获取的.
 
