@@ -1,3 +1,3 @@
-#ZhihuLink
+# ZhihuLink
 
-A plugin for link to `zhihu.com`.
+A Mathematica plugin for linking to `zhihu.com`.

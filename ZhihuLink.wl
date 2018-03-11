@@ -6,10 +6,8 @@
 (* ::Text:: *)
 (*Mathematica Package*)
 (*Created by Mathematica Plugin for IntelliJ IDEA*)
-(*Establish from GalAster's template(v1.3)*)
 (**)
 (* ::Text:: *)
-(*Author: 酱紫君*)
 (*Creation Date: 2018-03-08*)
 (*Copyright: Mozilla Public License Version 2.0*)
 (* ::Program:: *)
@@ -18,7 +16,7 @@
 (*3.不得使用其原始商标。*)
 (*4.如果修改了源代码，包含一份代码修改说明。*)
 (* ::Text:: *)
-(*这里应该填这个函数的介绍*)
+(*ZhihuLink 是一个获取知乎数据的链接程序.*)
 (* ::Section:: *)
 (*函数说明*)
 BeginPackage["ZhihuLink`"];
@@ -28,7 +26,7 @@ ZhihuLink::usage = "ZhihuLink 是一个获取知乎数据的链接程序.";
 (* ::Subsection::Closed:: *)
 (*主设置*)
 $ZhihuCookies::usage = "知乎Cookies, 有效期约一个月.";
-$ZhihuLinkDirectory::usage = "ZhihuLink的缓存目录.";
+$ZhihuLinkDirectory::usage = "打开 ZhihuLink 的缓存目录.";
 ZhihuStats::usage = "ZhihuStats[id] 获取用户的数据";
 ZhihuFollow::usage = "ZhihuFollow[id] 获取用户的关注者数据.";
 ZhihuCookiesReset::usage = "修改你的 Zhihu Cookies.";
