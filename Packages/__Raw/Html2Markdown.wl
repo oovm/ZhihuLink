@@ -18,15 +18,22 @@
 (* ::Section:: *)
 (*函数说明*)
 BeginPackage["Html2Markdown`"];
+Html2Markdown::usage = "将HTML转化为Markdown格式的方案集合.";
+H2MD::usage = "将HTML转化为Markdown格式.\r
+	Module->Zhihu, 针对知乎回答的转换方案\r
+	Module->Zhuanlan, 针对知乎专栏的转换方案\r
+	Module->WordPress, 针对 wp 的转换方案\r
+";
+$DirectoryH2MD::usage = "打开 Html2Markdown 的缓存目录.";
 (* ::Section:: *)
 (*程序包正体*)
-(* ::Subsection::Closed:: *)
-(*主设置*)
-H2MD::usage = "将HTML转化为Markdown格式.";
 Begin["`Private`"];
 (* ::Subsection::Closed:: *)
 (*主体代码*)
-Options[H2MD]={Module->Zhihu};
+$dir=FileNameJoin[{$UserBaseDirectory,"ApplicationData","Html2Markdown"}];
+Quiet@CreateDirectory[$dir];
+$DirectoryH2MD[]:=SystemOpen@$dir;
+Options[H2MD]={Module->Zhihu,Save->False};
 H2MD[input_String,OptionsPattern[]]:=Switch[
 	OptionValue[Module],
 	Zhihu,
@@ -50,10 +57,10 @@ ruleF=XMLElement["figure",{},{}]:>Nothing;
 (*noscript 渣画质*)
 ruleS=XMLElement["noscript",___]:>Nothing;
 (*img 源画质*)
-ruleImg=XMLElement["img",{___,"data-original"->img__,___},{}]:>StringJoin["![](",img,")"]
+ruleImg=XMLElement["img",{___,"data-original"->img__,___},{}]:>StringJoin["![](",img,")"];
 (*引用格式*)
-ruleLi=XMLElement["li",{},{li__}]:>StringJoin["> ",li,"\n"]
-ruleUl=XMLElement["ul",{},{ul__}]:>StringJoin["\n",ul,"\n"]
+ruleLi=XMLElement["li",{},{li__}]:>StringJoin["> ",li,"\n"];
+ruleUl=XMLElement["ul",{},{ul__}]:>StringJoin["\n",ul,"\n"];
 ZhihuH2MD[input_String]:=Block[
 	{xml,yu},
 	xml=ImportString[input,{"HTML","XMLObject"}];
