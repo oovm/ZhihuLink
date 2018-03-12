@@ -27,11 +27,8 @@ Begin["`Private`"];
 $zdir=FileNameJoin[{$UserBaseDirectory,"ApplicationData","ZhihuLink"}];
 $sd=FileNameJoin[{$zdir,"stats"}];
 $fd=FileNameJoin[{$zdir,"follows"}];
-Quiet@If[
-	CreateDirectory[$zdir]===$Failed,
-	Nothing,
-	CreateDirectory/@{$sd,$fd}
-];
+(*防止未创建缓存文件夹导致的问题*)
+Quiet[CreateDirectory/@{$zdir,$sd,$fd}];
 $ZhihuLinkDirectory[]:=SystemOpen@$zdir;
 (* ::Subsection::Closed:: *)
 (*附加设置*)
