@@ -1,6 +1,6 @@
 (* ::Package:: *)
 (* ::Title:: *)
-(*ZhihuLink*)
+(*ZhihuLinkRaw*)
 (* ::Subchapter:: *)
 (*程序包介绍*)
 (* ::Text:: *)
@@ -15,37 +15,20 @@
 (*2.提供快速的专利授权。*)
 (*3.不得使用其原始商标。*)
 (*4.如果修改了源代码，包含一份代码修改说明。*)
-(* ::Text:: *)
-(*ZhihuLink 是一个获取知乎数据的链接程序.*)
 (* ::Section:: *)
 (*函数说明*)
-BeginPackage["ZhihuLink`"];
-ZhihuLink::usage = "ZhihuLink 是一个获取知乎数据的链接程序.";
+BeginPackage["ZhihuLinkRaw`"];
 (* ::Section:: *)
 (*程序包正体*)
 (* ::Subsection::Closed:: *)
 (*主设置*)
 $ZhihuCookies::usage = "知乎Cookies, 有效期约一个月.";
-$ZhihuLinkDirectory::usage = "打开 ZhihuLink 的缓存目录.";
 ZhihuStats::usage = "ZhihuStats[id] 获取用户的数据";
 ZhihuFollow::usage = "ZhihuFollow[id] 获取用户的关注者数据.";
 ZhihuCookiesReset::usage = "修改你的 Zhihu Cookies.";
 Begin["`Private`"];
 (* ::Subsection::Closed:: *)
 (*主体代码*)
-ZhihuLink$Version="V1.0";
-ZhihuLink$LastUpdate="2018-03-10";
-(* ::Subsubsection:: *)
-(*Directories*)
-$zdir=FileNameJoin[{$UserBaseDirectory,"ApplicationData","ZhihuLink"}];
-$sd=FileNameJoin[{$zdir,"stats"}];
-$fd=FileNameJoin[{$zdir,"follows"}];
-Quiet@If[
-	CreateDirectory[$zdir]===$Failed,
-	Nothing,
-	CreateDirectory/@{$sd,$fd}
-];
-$ZhihuLinkDirectory[]:=SystemOpen@$zdir;
 (* ::Subsubsection:: *)
 (*Keys*)
 $ZhihuLinkAutoSave=True;
@@ -92,7 +75,7 @@ $keywordsNormal={
 };
 (* ::Subsubsection:: *)
 (*ZhihuStats*)
-ZhihuLink::para="非法参数 `1` !";
+ZhihuLinkRaw::para="非法参数 `1` !";
 Options[ZhihuStats]={Return->Min,Raw->False};
 $StatsNeeds="locations,employments,gender,educations,business,voteup_count,thanked_Count,follower_count,cover_url,
 	following_topic_count,following_question_count,following_favlists_count,following_columns_count,avatar_hue,
@@ -114,7 +97,7 @@ ZhihuStats[name_String,OptionsPattern[]]:=Block[
 	|>],Authentication->None];
 	If[
 		Head@get===String,
-		Message[ZhihuLink::para,name];
+		Message[ZhihuLinkRaw::para,name];
 		Return@Missing["NotAvailable"]
 	];
 	exname=StringJoin[name,"+",ToString@IntegerPart[1000AbsoluteTime@now],".json"];
@@ -128,7 +111,7 @@ ZhihuStats[name_String,OptionsPattern[]]:=Block[
 			return=Join[$keywordsNormal[[All;;-2,1]],{now}]/.get;
 			Association@Thread[Last@@@$keywordsNormal->return],
 		_,
-			Message[ZhihuLink::para,OptionValue[Return]];
+			Message[ZhihuLinkRaw::para,OptionValue[Return]];
 			Return@Missing["NotAvailable"]
 	]
 ];
@@ -162,7 +145,7 @@ ZhihuFollow[name_String,OptionsPattern[]]:=Block[
 		Raw,
 			raw,
 		_,
-		Message[ZhihuLink::para,OptionValue[Format]];
+		Message[ZhihuLinkRaw::para,OptionValue[Format]];
 		Return@Missing["NotAvailable"]
 	]
 ];
