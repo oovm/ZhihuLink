@@ -1,0 +1,3 @@
+How to use build.wls & install.wls?
+These are two wolfram-script files used to build .paclet file and install .paclet file.
+When release, put these on / directory and put all other files in a folder named "ZhihuLink" should work.
