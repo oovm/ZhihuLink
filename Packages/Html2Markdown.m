@@ -10,12 +10,16 @@ $dir=FileNameJoin[{$UserBaseDirectory,"ApplicationData","Html2Markdown"}];
 Quiet@CreateDirectory[$dir];
 $DirectoryH2MD[]:=SystemOpen@$dir;
 Options[H2MD]={Module->Zhihu,Save->False};
-H2MD[input_String,OptionsPattern[]]:=Switch[
-	OptionValue[Module],
-	Zhihu,
-		ZhihuRule`ZhihuH2MD[input],
-	Zhuanlan,
-		ZhuanlanRule`ZhuanlanH2MD[input]
+H2MD[input_String,OptionsPattern[]]:=Block[
+	{output},
+	output=Switch[
+		OptionValue[Module],
+		Zhihu,
+			ZhihuRule`ZhihuH2MD[input],
+		Zhuanlan,
+			ZhuanlanRule`ZhuanlanH2MD[input]
+	];
+	If[OptionValue[Save],Export[]]
 ];
 Begin["ZhihuRule`"];
 ruleTexline=XMLElement["img",{"src"->__,"alt"->tex__,__},{}]:>StringJoin["$",tex,"$"];
