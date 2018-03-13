@@ -10,27 +10,31 @@ $dir=FileNameJoin[{$UserBaseDirectory,"ApplicationData","Html2Markdown"}];
 Quiet@CreateDirectory[$dir];
 $DirectoryH2MD[]:=SystemOpen@$dir;
 Options[H2MD]={Module->Zhihu,Save->False};
-H2MD[input_String,OptionsPattern[]]:=Block[
-	{output},
-	output=Switch[
-		OptionValue[Module],
-		Zhihu,
-			ZhihuRule`ZhihuH2MD[input],
-		Zhuanlan,
-			ZhuanlanRule`ZhuanlanH2MD[input]
-	];
-	If[OptionValue[Save],Export[]]
+H2MD[input_String,OptionsPattern[]]:=Switch[
+	OptionValue[Module],
+	Zhihu,
+		ZhihuRule`ZhihuH2MD[input],
+	Zhuanlan,
+		ZhuanlanRule`ZhuanlanH2MD[input]
 ];
 Begin["ZhihuRule`"];
-ruleTexline=XMLElement["img",{"src"->__,"alt"->tex__,__},{}]:>StringJoin["$",tex,"$"];
-ruleTexdisplay=XMLElement["p",{},{XMLElement["img",{"src"->__,"alt"->tex__,__},{}]}]:>StringJoin["\n$$",tex,"$$\n"];
-rulePara=XMLElement["p",{},{para__}]:>StringJoin["\n",para,"\n"];
-ruleHr=XMLElement["hr",{},{}]:>"\n---\n";
-ruleF=XMLElement["figure",{},{}]:>Nothing;
-ruleS=XMLElement["noscript",___]:>Nothing;
-ruleImg=XMLElement["img",{___,"data-original"->img__,___},{}]:>StringJoin["![](",img,")"];
-ruleLi=XMLElement["li",{},{li__}]:>StringJoin["> ",li,"\n"];
-ruleUl=XMLElement["ul",{},{ul__}]:>StringJoin["\n",ul,"\n"];
+	(*tex 行内公式*)
+	ruleTexline=XMLElement["img",{"src"->__,"alt"->tex__,__},{}]:>StringJoin["$",tex,"$"];
+	(*tex 行间公式*)
+	ruleTexdisplay=XMLElement["p",{},{XMLElement["img",{"src"->__,"alt"->tex__,__},{}]}]:>StringJoin["\n$$",tex,"$$\n"];
+	(*p 段落模式*)
+	rulePara=XMLElement["p",{},{para__}]:>StringJoin["\n",para,"\n"];
+	(*hr 分割线*)
+	ruleHr=XMLElement["hr",{},{}]:>"\n---\n";
+	(*mma 解析异常*)
+	ruleF=XMLElement["figure",{},{}]:>Nothing;
+	(*noscript 渣画质*)
+	ruleS=XMLElement["noscript",___]:>Nothing;
+	(*img 源画质*)
+	ruleImg=XMLElement["img",{___,"data-original"->img__,___},{}]:>StringJoin["![](",img,")"];
+	(*引用格式*)
+	ruleLi=XMLElement["li",{},{li__}]:>StringJoin["> ",li,"\n"];
+	ruleUl=XMLElement["ul",{},{ul__}]:>StringJoin["\n",ul,"\n"];
 ZhihuH2MD[input_String]:=Block[
 	{xml,yu},
 	xml=ImportString[input,{"HTML","XMLObject"}];

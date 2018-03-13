@@ -1,20 +1,8 @@
-(* ::Package:: *)
-
-(* Wolfram Language Package *)
-
-(* Created by the Wolfram Workbench 12 Mar 2018 *)
-
-BeginPackage["ZhihuLinkGet`"];
 (* Exported symbols added here with SymbolName::usage *) 
-
 ZhihuLinkGetRaw::usage = "";
 ZhihuLinkGet::usage = "";
-
 Begin["`Private`"];
-(* Implementation of the package *)
-
 Needs["GeneralUtilities`"];
-
 $APIURL = <|
    "Miscellaneous" -> <|
      "Scheme" -> "https",
@@ -205,7 +193,6 @@ $APIURL = <|
        "RequireAuth" -> False|>
      |>
    |>;
-
 ZhihuLinkGetInit[] :=
   Module[{},
    $ZhihuCookie = Import[FindFile["zhihu.cookie"]]; 
@@ -217,12 +204,10 @@ ExportJSON[cat_String, item_String, name_String, content_] :=
    If[! DirectoryQ[path], CreateDirectory[path]]; 
    Export[FileNameJoin[{path, name <> ".json"}], content]
   ];
-
 FixURL[url_String, "Members", "FollowingQuestions"] := 
   "https://www.zhihu.com/api/v4" <> StringDrop[url, 21];
   
 FixURL[url_String, _, _] := url;
-
 ZhihuLinkGetRaw[cat_String, item_String, id_String, offset_: 0, limit_: 20] := 
   GeneralUtilities`ToAssociations[
    URLExecute[
@@ -268,9 +253,4 @@ ZhihuLinkGet[cat_String, item_String, name_String] :=
     ExportJSON[cat, item, name, data]
     ]
    ];
-
 End[];
-
-EndPackage[]
-
-
