@@ -1,1 +1,0 @@
-StringReplace[$Failed, Version -> "0.0.1 + $Failed", WolframVersion]
