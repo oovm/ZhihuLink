@@ -230,7 +230,7 @@ ZhihuLinkGetRaw[cat_String, item_String, id_String, offset_: 0, limit_: 20] :=
       		"Scheme" -> $APIURL[cat]["Scheme"],
       		"Domain" -> $APIURL[cat]["Domain"],
       		"Headers" -> {"Cookie" -> $ZhihuCookie, 
-        	    "auth" -> If[$APIURL[cat][item]["RequireAuth"], $ZhihuAuth, Nothing]},
+        	    "authorization" -> If[$APIURL[cat][item]["RequireAuth"], $ZhihuAuth, Nothing]},
             "Path" -> {Evaluate[$APIURL[cat][item]["Path"][<|"id" -> id|>]]},
             "Query" -> {"limit" -> limit, "offset" -> offset}
       	|>],
