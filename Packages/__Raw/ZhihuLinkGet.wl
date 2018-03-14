@@ -4,13 +4,13 @@
 
 (* Created by the Wolfram Workbench 12 Mar 2018 *)
 
-BeginPackage["ZhihuLinkGet`"]
+BeginPackage["ZhihuLinkGet`"];
 (* Exported symbols added here with SymbolName::usage *) 
 
 ZhihuLinkGetRaw::usage = "";
 ZhihuLinkGet::usage = "";
 
-Begin["`Private`"]
+Begin["`Private`"];
 (* Implementation of the package *)
 
 Needs["GeneralUtilities`"];
@@ -269,7 +269,7 @@ ZhihuLinkGet[cat_String, item_String, name_String] :=
     ]
    ];
 
-End[]
+End[];
 
 EndPackage[]
 

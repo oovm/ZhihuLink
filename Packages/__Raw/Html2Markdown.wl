@@ -44,23 +44,24 @@ H2MD[input_String,OptionsPattern[]]:=Switch[
 (* ::Subsubsection:: *)
 (*ZhihuRule*)
 Begin["ZhihuRule`"];
-(*tex 行内公式*)
-ruleTexline=XMLElement["img",{"src"->__,"alt"->tex__,__},{}]:>StringJoin["$",tex,"$"];
-(*tex 行间公式*)
-ruleTexdisplay=XMLElement["p",{},{XMLElement["img",{"src"->__,"alt"->tex__,__},{}]}]:>StringJoin["\n$$",tex,"$$\n"];
-(*p 段落模式*)
-rulePara=XMLElement["p",{},{para__}]:>StringJoin["\n",para,"\n"];
-(*hr 分割线*)
-ruleHr=XMLElement["hr",{},{}]:>"\n---\n";
-(*mma 解析异常*)
-ruleF=XMLElement["figure",{},{}]:>Nothing;
-(*noscript 渣画质*)
-ruleS=XMLElement["noscript",___]:>Nothing;
-(*img 源画质*)
-ruleImg=XMLElement["img",{___,"data-original"->img__,___},{}]:>StringJoin["![](",img,")"];
-(*引用格式*)
-ruleLi=XMLElement["li",{},{li__}]:>StringJoin["> ",li,"\n"];
-ruleUl=XMLElement["ul",{},{ul__}]:>StringJoin["\n",ul,"\n"];
+	(*tex 行内公式*)
+	ruleTexline=XMLElement["img",{"src"->__,"alt"->tex__,__},{}]:>StringJoin["$",tex,"$"];
+	(*tex 行间公式*)
+	ruleTexdisplay=XMLElement["p",{},{XMLElement["img",{"src"->__,"alt"->tex__,__},{}]}]:>StringJoin["\n$$",tex,"$$\n"];
+	(*p 段落模式*)
+	rulePara=XMLElement["p",{},{para__}]:>StringJoin["\n",para,"\n"];
+	(*hr 分割线*)
+	ruleHr=XMLElement["hr",{},{}]:>"\n---\n";
+	(*mma 解析异常*)
+	ruleF=XMLElement["figure",{},{}]:>Nothing;
+	(*noscript 渣画质*)
+	ruleS=XMLElement["noscript",___]:>Nothing;
+	(*img 源画质*)
+	ruleImg=XMLElement["img",{___,"data-original"->img__,___},{}]:>StringJoin["![](",img,")"];
+	(*引用格式*)
+	ruleLi=XMLElement["li",{},{li__}]:>StringJoin["> ",li,"\n"];
+	ruleUl=XMLElement["ul",{},{ul__}]:>StringJoin["\n",ul,"\n"];
+(*EndRules*)
 ZhihuH2MD[input_String]:=Block[
 	{xml,yu},
 	xml=ImportString[input,{"HTML","XMLObject"}];

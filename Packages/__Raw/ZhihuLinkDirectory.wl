@@ -17,7 +17,7 @@
 (*4.如果修改了源代码，包含一份代码修改说明。*)
 (* ::Section:: *)
 (*函数说明*)
-BeginPackage["ZhihuLinkDirectory`"]
+BeginPackage["ZhihuLinkDirectory`"];
 (* ::Section:: *)
 (*程序包正体*)
 (* ::Subsection::Closed:: *)
