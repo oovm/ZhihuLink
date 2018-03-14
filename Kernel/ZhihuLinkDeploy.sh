@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-#
+# 构建更新Raw程序包
 wolframscript -script ./ZhihuLinkBuild.wls
-#
+# 拷贝副本
 cd ../..
 rm -rf ZhihuLinkTemp
 cp -rf ZhihuLink ZhihuLinkTemp
 cd ZhihuLinkTemp
-#
+# 清理非必要文件
 rm -rf .git
 rm -rf .idea
 rm -rf Resources
@@ -14,19 +14,19 @@ rm -rf Packages/__Dev
 rm -rf Packages/__Raw
 rm -f .gitignore
 rm -f Kernel/ZhihuLink*
-#
+# 安装包打包
 echo "Print@FileBaseName@PackPaclet[DirectoryName@ExpandFileName[First[\$ScriptCommandLine]]]" > ZhihuLinkPack.wls
 echo "  "
 echo "Packing:"
 paclet=`wolframscript -script ./ZhihuLinkPack.wls`
 echo ${paclet}
 echo "  "
-#
+# 导入秘钥, 获取版本号
 GH_USER=GalAster
 GH_TOKEN=`cat ~/.ssh/github_token`
 VERSION=`awk 'BEGIN{info="'${paclet}'";print substr(info,11);}'`
 file_name=ZhihuLink-${VERSION}.paclet
-#
+# 创建一个release tag
 dt=`date +"%Y-%m-%d %H:%M"`
 res=`curl --user "$GH_USER:$GH_TOKEN" -X POST https://api.github.com/repos/wjxway/ZhihuLink-Mathematica/releases \
 -d "
@@ -36,9 +36,9 @@ res=`curl --user "$GH_USER:$GH_TOKEN" -X POST https://api.github.com/repos/wjxwa
   \"name\": \"Auto Build-v$VERSION\",
   \"body\": \"Auto Build $VERSION paclet by Gal@Builder at $dt :octocat: .\",
   \"draft\": false,
-  \"prerelease\": true
+  \"prerelease\": false
 }"`
-#
+#解析返回的 json
 parse_json(){
     value=`echo $1 | sed 's/.*"url":[^,}]*.*/\1/'`
     echo ${value} | sed 's/\"//g'
@@ -91,7 +91,8 @@ function fuckJson() {
 # fuckJson "${res}" "id"
 rel_id=`echo ${res} | python -c 'import json,sys;print(json.load(sys.stdin)["id"])'`
 echo ${rel_id}
-#
+# 上传安装包
+echo "  "
 cd ..
 curl --user "$GH_USER:$GH_TOKEN" \
     -X POST \
@@ -99,6 +100,6 @@ curl --user "$GH_USER:$GH_TOKEN" \
     --header 'Content-Type: text/javascript ' \
     --upload-file ${file_name}
 
-echo ""
+echo "  "
 echo "deploy finish, Ctrl+C to exit."
 sleep 60
