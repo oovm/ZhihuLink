@@ -2,5 +2,5 @@
 
 *.wls linguist-language=perl
 *.nb linguist-language=fsharp
-*.m linguist-language=NewLisp
-Packages/*.m binary
+# *.m linguist-language=NewLisp
+Packages/*.m binarys
