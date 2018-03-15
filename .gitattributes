@@ -1,0 +1,6 @@
+* text=auto
+
+*.wls linguist-language=perl
+*.nb linguist-language=fsharp
+*.m linguist-language=NewLisp
+Packages/*.m binary
