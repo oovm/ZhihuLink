@@ -20,7 +20,5 @@ build/@all;
 (*更新版本号*)
 info=FileNameJoin@{path,"PacletInfo.m"};
 foo=StringReplace[#,"."~~n:DigitCharacter..~~"\"":>"."~~ToString[ToExpression[n]+1]~~"\""]&;
-infoN=StringReplace[Import[info,"String"],
-	"Version"~~x__~~"WolframVersion":>"Version"~~foo[x]~~"WolframVersion"
-];
+infoN=StringReplace[Import[info,"String"],"Version"~~x__~~"\",":>"Version"~~foo[x]~~"\","];
 Export[info,infoN,"String"];

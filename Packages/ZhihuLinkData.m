@@ -1,2 +1,0 @@
-Begin["`Private`"]
-End[] (* `Private` *)
