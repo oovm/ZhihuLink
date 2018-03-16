@@ -32,14 +32,14 @@ WebTools`wtTypeElement[WebTools`wtXPath["//*[@id=\"root\"]/div/main/div/div/div/
 WebTools`wtClickElement[WebTools`wtXPath["//*[@id=\"root\"]/div/main/div/div/div/div[2]/div[1]/form/button"]];
 Pause@delay;
 GetCurrentURL[]==="https://www.zhihu.com/"
-)
+);
 
 
 
 End[];
 
 
-WebToolsInit[]:=If[!Private`$WebToolsStatus, Private`$WebToolsStatus=True;Needs["WebTools`"];WebTools`wtInstallWebTools[];]
+WebToolsInit[]:=If[!Private`$WebToolsStatus, Private`$WebToolsStatus=True;Needs["WebTools`"];WebTools`wtInstallWebTools[];];
 
 
 (*Help Functions which should actually be in WebTools!!!!!!!!!!!!!!!!!!!!*)
@@ -67,7 +67,7 @@ If[successq===$Canceled,Return@False]
 Private`$ZhihuUsername=temp["Phone Number"];
 Private`$ZhihuPassword=temp["Password"];
 Return@True
-]
+];
 
 
 ZhihuLinkLogin[Automatic]:=
@@ -79,13 +79,13 @@ WebTools`wtClickElement[WebTools`wtXPath["//*[@id=\"root\"]/div/main/div/div/div
 ZhihuTryLogin[Private`$ZhihuUsername,Private`$ZhihuPassword],
 (*Nope*)
 ZhihuLinkLogin[]
-]
+];
 
 
-GetCookie[]:=Association@Flatten[StringCases[#,StartOfString~~Shortest[name___]~~"="~~content___~~EndOfString:>(name->content)]&/@StringSplit[WebTools`wtJavascriptExecute["return document.cookie;"],"; "]]
+GetCookie[]:=Association@Flatten[StringCases[#,StartOfString~~Shortest[name___]~~"="~~content___~~EndOfString:>(name->content)]&/@StringSplit[WebTools`wtJavascriptExecute["return document.cookie;"],"; "]];
 
 
-ZhihuLinkLogin[]
+ZhihuLinkLogin[];
 
 
 GetCookie[]
