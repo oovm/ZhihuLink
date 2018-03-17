@@ -4,13 +4,16 @@
 
 (* Created by the Wolfram Workbench 12 Mar 2018 *)
 
-BeginPackage["ZhihuLinkGet`"];
+BeginPackage["ZhihuLinkGet`"]
+(* Exported symbols added here with SymbolName::usage *) 
+
 ZhihuLinkGetRaw::usage = "";
 ZhihuLinkGet::usage = "";
-ZhihuLinkUserAnswer::usage = "";
-ZhihuLinkUserArticle::usage = "";
+
+Begin["`Private`"]
+(* Implementation of the package *)
+
 Needs["GeneralUtilities`"];
-Begin["`Private`"];
 
 $APIURL = <|
    "Miscellaneous" -> <|
@@ -206,17 +209,21 @@ $APIURL = <|
 ZhihuLinkGetInit[] :=
   Module[{},
    $ZhihuCookie = Import[FindFile["zhihu.cookie"]]; 
-   $ZhihuAuth = Import[FindFile["zhihu.auth"]];
+   $ZhihuAuth = 
+	 "Bearer " <> 
+	  StringCases[$ZhihuCookie, 
+	    "z_c0" ~~ Shortest[__] ~~ "\"" ~~ Shortest[auth__] ~~ "\"" :> 
+	     auth][[1]];
    ];
    
 ExportJSON[cat_, item_, name_String, content_, 
    OptionsPattern[{"CustomSavePath" -> None}]] := 
   Module[{path}, 
    If[(path = OptionValue["CustomSavePath"]) == None, 
-    path = FileNameJoin[{cat, item}]];
+    path = FileNameJoin[{$ZhihuLinkDir, cat, item}]];
    If[! DirectoryQ[path], CreateDirectory[path]]; 
    Export[FileNameJoin[{path, name <> ".json"}], content]
-  ];
+   ];
   
 ts[] := ToString@IntegerPart[1000 AbsoluteTime@Now];
 
@@ -226,48 +233,56 @@ FixURL[url_String, "Members",
     "https://www.zhihu.com/api/v4" <> StringDrop[url, 21];
   
 FixURL[url_String, _, _] := url;
-(*Extension use Sequence["a"->a,"b"->b]*)
-Options[ZhihuLinkGetRaw]={Extension->Nothing};
-ZhihuLinkGetRaw[cat_String, item_String, id_String, offset_: 0, limit_: 20,OptionsPattern[]] :=
-    GeneralUtilities`ToAssociations[
-	    URLExecute[
-		    HTTPRequest[<|
-			    "Scheme" -> $APIURL[cat]["Scheme"],
-				"Domain" -> $APIURL[cat]["Domain"],
-				"Headers" -> {"Cookie" -> $ZhihuCookie,
-					"authorization" -> If[$APIURL[cat][item]["RequireAuth"], $ZhihuAuth, Nothing]},
-				"Path" -> {Evaluate[$APIURL[cat][item]["Path"][<|"id" -> id|>]]},
-				"Query" -> {"limit" -> limit, "offset" -> offset,OptionValue[Extension]}
-			|>],
-		    Authentication -> None]
-    ];
-  
-ZhihuLinkGetRaw[url_String, requireAuthQ_: False] := 
-  GeneralUtilities`ToAssociations[URLExecute[HTTPRequest[url,
-     <|"Headers" -> {
-        "Cookie" -> $ZhihuCookie,
-        "authorization" -> If[requireAuthQ, $ZhihuAuth, Nothing]}
-      	|>],
-    Authentication -> None]
-  ];
-  
-ZhihuLinkGet[cat_String, item_String, name_String, 
-   OptionsPattern[{"CustomSavePath" -> None, 
-     "CustomFilename" -> None}]] :=
 
-  Module[{current, data = {}, exportname, curURL},
+Options[ZhihuLinkGetRaw] = {"offset" -> 0, "limit" -> 20, 
+   "Extension" -> Nothing, "RequireAuth" -> False};
+ZhihuLinkGetRaw[cat_String, item_String, id_String, 
+   OptionsPattern[]] := 
+  GeneralUtilities`ToAssociations[
+   URLExecute[
+    HTTPRequest[<|
+      		"Scheme" -> $APIURL[cat]["Scheme"],
+      		"Domain" -> $APIURL[cat]["Domain"],
+      		"Headers" -> {"Cookie" -> $ZhihuCookie, 
+        "authorization" -> 
+         If[$APIURL[cat][item]["RequireAuth"], $ZhihuAuth, Nothing]},
+      "Path" -> {Evaluate[$APIURL[cat][item]["Path"][<|"id" -> id|>]]},
+      "Query" -> {"limit" -> OptionValue@"limit", 
+        "offset" -> OptionValue@"offset", OptionValue["Extension"]}
+      	|>], Authentication -> None]];
+  
+ZhihuLinkGetRaw[url_String, OptionsPattern[]] := 
+  GeneralUtilities`ToAssociations[
+   URLExecute[
+    HTTPRequest[
+     url, <|	
+      "Headers" -> {"Cookie" -> $ZhihuCookie, 
+        "authorization" -> 
+         If[OptionValue["RequireAuth"], $ZhihuAuth, Nothing]}
+      	|>], Authentication -> None]];
+  
+Options[ZhihuLinkGet] = {"Save" -> True, "CustomSavePath" -> None, 
+   "CustomFilename" -> None, "Extension" -> Nothing};
+ZhihuLinkGet[cat_String, item_String, name_String, OptionsPattern[]] :=
+
+    Module[{current, data = {}, exportname, curURL, 
+    saveQ = OptionValue["Save"]},
    (*Not implemented error*)
    
    If[! (KeyExistsQ[$APIURL, cat] && KeyExistsQ[$APIURL[cat], item]), 
     Return[$Failed]];
-   current = ZhihuLinkGetRaw[cat, item, name];
+   current = 
+    ZhihuLinkGetRaw[cat, item, name, 
+     "Extension" -> OptionValue["Extension"]];
    If[(exportname = OptionValue["CustomFilename"]) == None, 
     exportname = name];
    If[! KeyExistsQ[current, "paging"],
-    (*no paging, direct export*)
-    
-    ExportJSON[cat, item, exportname, current, 
-     "CustomSavePath" -> OptionValue["CustomSavePath"]],
+    (*no paging, direct export or save*)
+    If[! saveQ,
+     current,
+     ExportJSON[cat, item, exportname, current, 
+      "CustomSavePath" -> OptionValue["CustomSavePath"]]]
+    ,
     (*with paging, using next to fetch all*)
     
     data = Join[data, current["data"]];
@@ -280,25 +295,25 @@ ZhihuLinkGet[cat_String, item_String, name_String,
        StringTemplate["Unable to read from: `url`."][<|
          "url" -> curURL|>]]];
      ];
-    ExportJSON[cat, item, exportname, data, 
-     "CustomSavePath" -> OptionValue["CustomSavePath"]]
+    If[! saveQ,
+     data,
+     ExportJSON[cat, item, exportname, data, 
+      "CustomSavePath" -> OptionValue["CustomSavePath"]]]
     ]
    ];
-(*id 表示回答者的用户名*)
-ZhihuLinkUserAnswer[id_String] := ZhihuLinkGet[
-	"Members", "Answers", id,
-	"CustomSavePath" -> "post",
-	"CustomFilename" -> StringTemplate["`id`.answer.`ts`"][<|"id" -> id, "ts" -> ts[] |>]
-];
-(*id 表示专栏文章的用户名*)
-ZhihuLinkUserArticle[id_String] := ZhihuLinkGet[
-	"Members", "Articles", id,
-	"CustomSavePath" -> "post",
-	"CustomFilename" -> StringTemplate["`id`.article.`ts`"][<|"id" -> id, "ts" -> ts[] |>]
-];
+   
+ZhihuLinkUserAnswer[id_] := 
+ ZhihuLinkGet["Members", "Answers", id, "CustomSavePath" -> "post", 
+  "CustomFilename" -> 
+   StringTemplate["`id`.answer.`ts`"][<|"id" -> id, "ts" -> ts[] |>]];
+   
+ZhihuLinkUserArticle[id_] := 
+ ZhihuLinkGet["Members", "Articles", id, "CustomSavePath" -> "post", 
+  "CustomFilename" -> 
+   StringTemplate["`id`.article.`ts`"][<|"id" -> id, "ts" -> ts[] |>]];
 
-End[];
+End[]
 
-EndPackage[];
+EndPackage[]
 
 
