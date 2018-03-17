@@ -4,16 +4,13 @@
 
 (* Created by the Wolfram Workbench 12 Mar 2018 *)
 
-BeginPackage["ZhihuLinkGet`"]
-(* Exported symbols added here with SymbolName::usage *) 
-
+BeginPackage["ZhihuLinkGet`"];
 ZhihuLinkGetRaw::usage = "";
 ZhihuLinkGet::usage = "";
-
-Begin["`Private`"]
-(* Implementation of the package *)
-
+ZhihuLinkUserAnswer::usage = "";
+ZhihuLinkUserArticle::usage = "";
 Needs["GeneralUtilities`"];
+Begin["`Private`"];
 
 $APIURL = <|
    "Miscellaneous" -> <|
@@ -229,20 +226,21 @@ FixURL[url_String, "Members",
     "https://www.zhihu.com/api/v4" <> StringDrop[url, 21];
   
 FixURL[url_String, _, _] := url;
-
-ZhihuLinkGetRaw[cat_String, item_String, id_String, offset_: 0, limit_: 20] := 
-  GeneralUtilities`ToAssociations[
-   URLExecute[
-    HTTPRequest[<|
-      		"Scheme" -> $APIURL[cat]["Scheme"],
-      		"Domain" -> $APIURL[cat]["Domain"],
-      		"Headers" -> {"Cookie" -> $ZhihuCookie, 
-        	    "authorization" -> If[$APIURL[cat][item]["RequireAuth"], $ZhihuAuth, Nothing]},
-            "Path" -> {Evaluate[$APIURL[cat][item]["Path"][<|"id" -> id|>]]},
-            "Query" -> {"limit" -> limit, "offset" -> offset}
-      	|>],
-    Authentication -> None]
-  ];
+(*Extension use Sequence["a"->a,"b"->b]*)
+Options[ZhihuLinkGetRaw]={Extension->Nothing};
+ZhihuLinkGetRaw[cat_String, item_String, id_String, offset_: 0, limit_: 20,OptionsPattern[]] :=
+    GeneralUtilities`ToAssociations[
+	    URLExecute[
+		    HTTPRequest[<|
+			    "Scheme" -> $APIURL[cat]["Scheme"],
+				"Domain" -> $APIURL[cat]["Domain"],
+				"Headers" -> {"Cookie" -> $ZhihuCookie,
+					"authorization" -> If[$APIURL[cat][item]["RequireAuth"], $ZhihuAuth, Nothing]},
+				"Path" -> {Evaluate[$APIURL[cat][item]["Path"][<|"id" -> id|>]]},
+				"Query" -> {"limit" -> limit, "offset" -> offset,OptionValue[Extension]}
+			|>],
+		    Authentication -> None]
+    ];
   
 ZhihuLinkGetRaw[url_String, requireAuthQ_: False] := 
   GeneralUtilities`ToAssociations[URLExecute[HTTPRequest[url,
@@ -286,19 +284,21 @@ ZhihuLinkGet[cat_String, item_String, name_String,
      "CustomSavePath" -> OptionValue["CustomSavePath"]]
     ]
    ];
-   
-ZhihuLinkUserAnswer[id_] := 
- ZhihuLinkGet["Members", "Answers", id, "CustomSavePath" -> "post", 
-  "CustomFilename" -> 
-   StringTemplate["`id`.answer.`ts`"][<|"id" -> id, "ts" -> ts[] |>]];
-   
-ZhihuLinkUserArticle[id_] := 
- ZhihuLinkGet["Members", "Articles", id, "CustomSavePath" -> "post", 
-  "CustomFilename" -> 
-   StringTemplate["`id`.article.`ts`"][<|"id" -> id, "ts" -> ts[] |>]];
+(*id 表示回答者的用户名*)
+ZhihuLinkUserAnswer[id_String] := ZhihuLinkGet[
+	"Members", "Answers", id,
+	"CustomSavePath" -> "post",
+	"CustomFilename" -> StringTemplate["`id`.answer.`ts`"][<|"id" -> id, "ts" -> ts[] |>]
+];
+(*id 表示专栏文章的用户名*)
+ZhihuLinkUserArticle[id_String] := ZhihuLinkGet[
+	"Members", "Articles", id,
+	"CustomSavePath" -> "post",
+	"CustomFilename" -> StringTemplate["`id`.article.`ts`"][<|"id" -> id, "ts" -> ts[] |>]
+];
 
-End[]
+End[];
 
-EndPackage[]
+EndPackage[];
 
 

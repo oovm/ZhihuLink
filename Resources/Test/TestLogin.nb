@@ -1,0 +1,87 @@
+Notebook[{
+Cell[BoxData[{
+ RowBox[{"chrome", "=", 
+  RowBox[{
+  "StartExternalSession", "[", "\"\<WebDriver-Chrome\>\"", 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"ExternalEvaluate", "[", 
+  RowBox[{"chrome", ",", 
+   RowBox[{
+   "\"\<OpenWebPage\>\"", "\[Rule]", "\"\<https://www.Zhihu.com\>\""}]}], 
+  "]"}]}], "Input",
+ CellLabel->"In[23]:=",ExpressionUUID->"1697eff8-8356-4ce3-b33e-e9da715756bc"],
+
+Cell[BoxData[""], \
+"Input",ExpressionUUID->"e7735825-f0bb-468b-8993-0a9bb5ae7941"],
+
+Cell[BoxData["Quit"], "Input",
+ CellLabel->
+  "In[100]:=",ExpressionUUID->"5da79b5f-7b83-48b7-ad1d-a836c1349d6c"],
+
+Cell[BoxData[
+ RowBox[{"ZhihuLinkUserArticle", "[", "\"\<GalAster\>\"", "]"}]], "Input",
+ CellLabel->"In[31]:=",ExpressionUUID->"bd4b3bf0-61c8-4e0e-a3fd-318548ddc438"],
+
+Cell[BoxData[
+ RowBox[{"SystemOpen", "[", 
+  RowBox[{"DirectoryName", "[", 
+   RowBox[{
+   "AbsoluteFileName", "[", 
+    "\"\<post\\\\GalAster.article.3730230030171.json\>\"", "]"}], "]"}], 
+  "]"}]], "Input",
+ NumberMarks->False,
+ CellLabel->"In[32]:=",ExpressionUUID->"b07efa50-74d3-4738-af77-1a8c9957442b"],
+
+Cell[BoxData[
+ RowBox[{"SystemOpen", "[", 
+  RowBox[{"DirectoryName", "[", 
+   RowBox[{
+   "AbsoluteFileName", "[", 
+    "\"\<post\\\\galseraph.answer.3730229681888.json\>\"", "]"}], "]"}], 
+  "]"}]], "Input",
+ NumberMarks->False,
+ CellLabel->"In[28]:=",ExpressionUUID->"5fe7c62b-e9b7-453e-94fd-fcf5e3cbcdb2"],
+
+Cell[BoxData[
+ RowBox[{"??", "ZhihuLinkGet`Private`*"}]], "Input",
+ CellLabel->"In[39]:=",ExpressionUUID->"647f80bd-97d2-4a49-a25b-c9e8b344e1ce"],
+
+Cell[BoxData["ZhihuLinkGet`Private`$ZhihuCookie"], "Input",
+ CellLabel->"In[26]:=",ExpressionUUID->"a4312569-83a1-40c3-87ce-e46f92bd5144"],
+
+Cell[BoxData[
+ RowBox[{"ZhihuLinkGet`Private`ZhihuLinkGetInit", "[", "]"}]], "Input",
+ CellLabel->"In[25]:=",ExpressionUUID->"db3d1a6d-01f5-4496-b933-a316f484d353"],
+
+Cell[BoxData[{
+ RowBox[{"$ZhihuCookie", " ", "=", " ", 
+  RowBox[{"Import", "[", 
+   RowBox[{"FindFile", "[", "\"\<zhihu.cookie\>\"", "]"}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"$ZhihuAuth", " ", "=", " ", 
+  RowBox[{"Import", "[", 
+   RowBox[{"FindFile", "[", "\"\<zhihu.auth\>\"", "]"}], "]"}]}]}], "Input",
+ CellLabel->"In[94]:=",ExpressionUUID->"7e7d1f0f-745a-4e70-b7b1-2fcaea916b50"],
+
+Cell[BoxData[
+ RowBox[{"FindFile", "[", "\"\<zhihu.cookie\>\"", "]"}]], "Input",
+ CellLabel->"In[44]:=",ExpressionUUID->"475482bb-b4cd-42dd-a583-11d1b9411703"],
+
+Cell[BoxData["CC"], "Input",
+ CellLabel->"In[45]:=",ExpressionUUID->"116bccac-3966-4144-9eeb-0b2a4595ca78"],
+
+Cell[BoxData[
+ RowBox[{"Import", "[", 
+  "\"\<https://www.zhihu.com/api/v4/members/GalAster/articles?offset=0&limit=\
+1&sort_by=created\>\"", "]"}]], "Input",
+ CellLabel->"In[33]:=",ExpressionUUID->"a1124dc6-1d6a-4d37-bfcb-5aacbd55a554"]
+},
+WindowSize->{775, 872},
+WindowMargins->{{Automatic, 400}, {-206, Automatic}},
+PrivateNotebookOptions->{"FileOutlineCache"->False},
+TrackCellChangeTimes->False,
+FrontEndVersion->"11.3 for Microsoft Windows (64-bit) (2018\:5e743\:67086\
+\:65e5)",
+StyleDefinitions->"Default.nb"
+]
+
