@@ -47,8 +47,8 @@ Answer2MD[post_,OptionsPattern[]]:=Block[
 Options[ZhihuAnswerBackup]={MetaInformation->True,Times->True};
 ZhihuAnswerBackup[id_String,OptionsPattern[]]:=Block[
 	{i=1,n,get,now=Now},
-	Print@Style[Text["正在抓取"<>id<>"的回答"],Blue];
-	get=ZhihuLinkUserAnswer["GalAster",Extension->Min,Save->False];
+	Print@Style[Text["正在抓取 "<>id<>" 的回答"],Blue];
+	get=ZhihuLinkUserAnswer[id,Extension->Min,Save->False];
 	Print@Style[Text["共抓取到 "<>ToString[Length@get]<>" 个回答, 转换中....."],Brown];
 	Monitor[
 		Table[Answer2MD[n,MetaInformation->OptionValue[MetaInformation]];i++,{n,get}],

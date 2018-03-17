@@ -32,19 +32,7 @@ Begin["`Private`"];
 (* ::Subsubsection:: *)
 (*Keys*)
 $ZhihuLinkAutoSave=True;
-If[FindFile["zhihu.cookies"] === $Failed,
-	$ZhihuCookies = "";
-	"未检测到 zhihu.cookies 文件\n
-	请使用 ZhihuCookiesReset[] 设置你的cookies.",
-	$ZhihuCookies = Import@FindFile["zhihu.cookies"]
-];
-ZhihuCookiesReset[]:=CreateDialog[{
-	TextCell["粘贴你的Cookies(不需要是字符型)"],
-	InputField[Dynamic[$ZhihuCookies],String,ImageSize->{400,400/GoldenRatio^2}],
-	DefaultButton[DialogReturn[$ZhihuCookies]]
-	},
-	WindowTitle->"需要Token"
-];
+
 $keywordsMin={
 	{"name","用户名"},
 	{"url_token","ID"},

@@ -37,6 +37,21 @@ ZhihuLinkInit[] :=Block[
 	zc0=Select[StringSplit[StringDelete[$ZhihuCookie," "],";"],StringTake[#,5]=="z_c0="&];
 	$ZhihuAuth="Bearer "<>StringTake[First@zc0,6;;-1];
 ];
+
+If[FindFile["zhihu.cookies"] === $Failed,
+	$ZhihuCookies = "";
+	"未检测到 zhihu.cookie 文件\n
+	请使用 ZhihuCookiesReset[] 设置你的cookies.",
+	$ZhihuCookies = Import@FindFile["zhihu.cookie"]
+];
+ZhihuCookiesReset[]:=CreateDialog[{
+	TextCell["粘贴你的Cookies(不需要是字符型)"],
+	InputField[Dynamic[$ZhihuCookies],String,ImageSize->{400,400/GoldenRatio^2}],
+	DefaultButton[DialogReturn[$ZhihuCookies]]
+},
+	WindowTitle->"需要Token"
+];
+
 (*防止未创建缓存文件夹导致的问题*)
 Quiet[CreateDirectory/@{$ZhihuLinkMarkdown}];
 $ZhihuLinkMarkdown=FileNameJoin[{$UserBaseDirectory,"ApplicationData","HTML2Markdown","Zhihu"}];
