@@ -303,14 +303,56 @@ ZhihuLinkGet[cat_String, item_String, name_String, OptionsPattern[]] :=
    ];
    
 ZhihuLinkUserAnswer[id_] := 
- ZhihuLinkGet["Members", "Answers", id, "CustomSavePath" -> "post", 
-  "CustomFilename" -> 
-   StringTemplate["`id`.answer.`ts`"][<|"id" -> id, "ts" -> ts[] |>]];
-   
+  ZhihuLinkGet["Members", "Answers", id, "CustomSavePath" -> "post", 
+   "CustomFilename" -> 
+    StringTemplate["`id`.answer.`ts`"][<|"id" -> id, "ts" -> ts[] |>]];
+    
 ZhihuLinkUserArticle[id_] := 
- ZhihuLinkGet["Members", "Articles", id, "CustomSavePath" -> "post", 
-  "CustomFilename" -> 
-   StringTemplate["`id`.article.`ts`"][<|"id" -> id, "ts" -> ts[] |>]];
+  ZhihuLinkGet["Members", "Articles", id, "CustomSavePath" -> "post", 
+   "CustomFilename" -> 
+    StringTemplate["`id`.article.`ts`"][<|"id" -> id, 
+      "ts" -> ts[] |>]];
+      
+ZhihuLinkUserFollowee[id_] := 
+  ZhihuLinkGet["Members", "Followees", id, 
+   "CustomSavePath" -> "follow", 
+   "CustomFilename" -> 
+    StringTemplate["`id`.followees.`ts`"][<|"id" -> id, 
+      "ts" -> ts[] |>]];
+      
+ZhihuLinkUserFollower[id_] := 
+  ZhihuLinkGet["Members", "Followers", id, 
+   "CustomSavePath" -> "follow", 
+   "CustomFilename" -> 
+    StringTemplate["`id`.followers.`ts`"][<|"id" -> id, 
+      "ts" -> ts[] |>]];
+      
+ZhihuLinkUserFollowingQuestion[id_] := 
+  ZhihuLinkGet["Members", "FollowingQuestions", id, 
+   "CustomSavePath" -> "follow", 
+   "CustomFilename" -> 
+    StringTemplate["`id`.questions.`ts`"][<|"id" -> id, 
+      "ts" -> ts[] |>]];
+      
+ZhihuLinkUserFollowingTopic[id_] := 
+  ZhihuLinkGet["Members", "FollowingTopics", id, 
+   "CustomSavePath" -> "follow", 
+   "CustomFilename" -> 
+    StringTemplate["`id`.topics.`ts`"][<|"id" -> id, "ts" -> ts[] |>]];
+    
+ZhihuLinkUserFollowingColumn[id_] := 
+  ZhihuLinkGet["Members", "FollowingColumns", id, 
+   "CustomSavePath" -> "follow", 
+   "CustomFilename" -> 
+    StringTemplate["`id`.columns.`ts`"][<|"id" -> id, 
+      "ts" -> ts[] |>]];
+      
+ZhihuLinkUserFollowingFavlist[id_] := 
+  ZhihuLinkGet["Members", "FollowingFavlists", id, 
+   "CustomSavePath" -> "follow", 
+   "CustomFilename" -> 
+    StringTemplate["`id`.favlists.`ts`"][<|"id" -> id, 
+      "ts" -> ts[] |>]];
 
 End[]
 
