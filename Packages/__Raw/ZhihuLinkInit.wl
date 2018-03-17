@@ -23,6 +23,7 @@ BeginPackage["ZhihuLinkInit`"];
 Needs["GeneralUtilities`"];
 (* ::Subsection::Closed:: *)
 (*主设置*)
+$ZhihuLinkMarkdown::usage = "ZhihuLink 的缓存目录.";
 $ZhihuLinkDirectory::usage = "ZhihuLink 的缓存目录.";
 $ZhihuCookie::usage ="";
 $ZhihuAuth::usage ="";
@@ -37,7 +38,8 @@ ZhihuLinkInit[] :=Block[
 	$ZhihuAuth="Bearer "<>StringTake[First@zc0,6;;-1];
 ];
 (*防止未创建缓存文件夹导致的问题*)
-
+Quiet[CreateDirectory/@{$ZhihuLinkMarkdown}];
+$ZhihuLinkMarkdown=FileNameJoin[{$UserBaseDirectory,"ApplicationData","HTML2Markdown","Zhihu"}];
 (* ::Subsection::Closed:: *)
 (*附加设置*)
 End[] ;

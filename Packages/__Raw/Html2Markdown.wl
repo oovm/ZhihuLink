@@ -20,9 +20,9 @@
 BeginPackage["Html2Markdown`"];
 Html2Markdown::usage = "将HTML转化为Markdown格式的方案集合.";
 H2MD::usage = "将HTML转化为Markdown格式.\r
-	Module->Zhihu, 针对知乎回答的转换方案\r
-	Module->Zhuanlan, 针对知乎专栏的转换方案\r
-	Module->WordPress, 针对 wp 的转换方案\r
+	Module->\"Zhihu\", 针对知乎回答的转换方案\r
+	Module->\"Zhuanlan\", 针对知乎专栏的转换方案\r
+	Module->\"WordPress\", 针对 wp 的转换方案\r
 ";
 $DirectoryH2MD::usage = "打开 Html2Markdown 的缓存目录.";
 (* ::Section:: *)
@@ -33,7 +33,7 @@ Begin["`Private`"];
 $dir=FileNameJoin[{$UserBaseDirectory,"ApplicationData","Html2Markdown"}];
 Quiet@CreateDirectory[$dir];
 $DirectoryH2MD[]:=SystemOpen@$dir;
-Options[H2MD]={Module->Zhihu,Save->False};
+Options[H2MD]={Module->"Zhihu",Save->False};
 H2MD[input_String,OptionsPattern[]]:=Switch[
 	OptionValue[Module],
 	"Zhihu",
@@ -57,17 +57,32 @@ Begin["ZhihuRule`"];
 	(*noscript 渣画质*)
 	ruleS=XMLElement["noscript",___]:>Nothing;
 	(*img 源画质*)
-	ruleImg=XMLElement["img",{___,"data-original"->img__,___},{}]:>StringJoin["![](",img,")"];
+	ruleImg1=XMLElement["img",{___,"data-original"->img__,___},{}]:>StringJoin["![](",img,")"];
+	ruleImg2=XMLElement["img",{___,"data-actualsrc"->img__,___},{}]:>StringJoin["![](",img,")"];
 	(*引用格式*)
 	ruleLi=XMLElement["li",{},{li__}]:>StringJoin["> ",li,"\n"];
 	ruleUl=XMLElement["ul",{},{ul__}]:>StringJoin["\n",ul,"\n"];
-(*EndRules*)
-ZhihuH2MD[input_String]:=Block[
-	{xml,yu},
+	ruleBq=XMLElement["blockquote",{},q_]:>StringJoin@Riffle[q,"> ",{1,-1,3}];
+	(*图片下文字*)
+	ruleFc=XMLElement["figcaption",{},{}]:>"\n图注:";
+	(*超链接*)
+	ruleA=XMLElement["a",{___,"href"->url_,___},{f__}]:>StringJoin["[",f,"](",url,")"];
+	(*空行*)
+	ruleBr=XMLElement["br",___]:>"\n";
+	(*代码格式*)
+	ruleCode1=XMLElement["code",___,{__,code_}]:>StringJoin["\n```\n",code,"```\n"];
+	ruleCode2=XMLElement["div",___,{XMLElement["pre",{},{raw_}]}]:>raw;
+	(*EndRules*)
+Options[ZhihuH2MD]={Debug->False};
+ZhihuH2MD[input_String,OptionsPattern[]]:=Block[
+	{xml,yu,body},
 	xml=ImportString[input,{"HTML","XMLObject"}];
-	yu=xml/.{ruleTexdisplay,ruleTexline,ruleImg,ruleLi};
-	body=Part[yu/.{rulePara,ruleHr,ruleF,ruleS,ruleUl},2,3,1];
-	StringJoin[ToString/@body[[3]]]
+	yu=xml/.{ruleTexdisplay,ruleTexline,ruleImg1,ruleImg2,ruleLi,ruleA,ruleFc,ruleBr,ruleCode1};
+	body=Part[yu/.{rulePara,ruleHr,ruleF,ruleS,ruleUl,ruleCode2,ruleBq},2,3,1];
+	If[OptionValue[Debug],
+		Return[body],
+		StringJoin[ToString/@body[[3]]]
+	]
 ];
 End[];
 

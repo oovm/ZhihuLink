@@ -1,0 +1,203 @@
+Notebook[{
+Cell[BoxData["Quit"], "Input",
+ CellLabel->"In[78]:=",ExpressionUUID->"46c8a3f0-3956-43db-abd6-1772b742ea45"],
+
+Cell[BoxData[
+ RowBox[{"<<", "ZhihuLink`"}]], "Input",
+ CellLabel->"In[1]:=",ExpressionUUID->"c253872a-23a7-4b71-a77b-b0b00472ea4c"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"??", "ZhihuLink`*"}]], "Input",
+ CellLabel->"In[2]:=",ExpressionUUID->"cbd5f6e3-5915-4ed2-9570-f29b7071e610"],
+
+Cell[BoxData[
+ DynamicModuleBox[{Typeset`open$$ = True}, 
+  PaneSelectorBox[{False->
+   RowBox[{
+    OpenerBox[Dynamic[Typeset`open$$],
+     ImageSize->Small], 
+    StyleBox["ZhihuLink`", "InfoHeading"]}], True->GridBox[{
+     {
+      RowBox[{
+       OpenerBox[Dynamic[Typeset`open$$],
+        ImageSize->Small], 
+       StyleBox["ZhihuLink`", "InfoHeading"]}]},
+     {GridBox[{
+        {
+         ButtonBox["H2MD",
+          BaseStyle->"InformationLinkLF",
+          ButtonData:>{"Info23730297449-5034692", {"H2MD", "ZhihuLink`"}},
+          ButtonNote->"ZhihuLink`"], 
+         ButtonBox["ZhihuLinkGet",
+          BaseStyle->"InformationLinkLF",
+          
+          ButtonData:>{
+           "Info23730297449-5034692", {"ZhihuLinkGet", "ZhihuLink`"}},
+          ButtonNote->"ZhihuLink`"], 
+         ButtonBox["ZhihuLinkUserArticle",
+          BaseStyle->"InformationLinkLF",
+          
+          ButtonData:>{
+           "Info23730297449-5034692", {"ZhihuLinkUserArticle", "ZhihuLink`"}},
+          ButtonNote->"ZhihuLink`"], 
+         ButtonBox["$ZhihuCookie",
+          BaseStyle->"InformationLinkLF",
+          
+          ButtonData:>{
+           "Info23730297449-5034692", {"$ZhihuCookie", "ZhihuLink`"}},
+          ButtonNote->"ZhihuLink`"]},
+        {
+         ButtonBox["Html2Markdown",
+          BaseStyle->"InformationLinkLF",
+          
+          ButtonData:>{
+           "Info23730297449-5034692", {"Html2Markdown", "ZhihuLink`"}},
+          ButtonNote->"ZhihuLink`"], 
+         ButtonBox["ZhihuLinkGetInit",
+          BaseStyle->"InformationLinkLF",
+          
+          ButtonData:>{
+           "Info23730297449-5034692", {"ZhihuLinkGetInit", "ZhihuLink`"}},
+          ButtonNote->"ZhihuLink`"], 
+         ButtonBox["ZhihuStats",
+          BaseStyle->"InformationLinkLF",
+          
+          ButtonData:>{
+           "Info23730297449-5034692", {"ZhihuStats", "ZhihuLink`"}},
+          ButtonNote->"ZhihuLink`"], 
+         ButtonBox["$ZhihuCookies",
+          BaseStyle->"InformationLinkLF",
+          
+          ButtonData:>{
+           "Info23730297449-5034692", {"$ZhihuCookies", "ZhihuLink`"}},
+          ButtonNote->"ZhihuLink`"]},
+        {
+         ButtonBox["ZhihuCookiesReset",
+          BaseStyle->"InformationLinkLF",
+          
+          ButtonData:>{
+           "Info23730297449-5034692", {"ZhihuCookiesReset", "ZhihuLink`"}},
+          ButtonNote->"ZhihuLink`"], 
+         ButtonBox["ZhihuLinkGetRaw",
+          BaseStyle->"InformationLinkLF",
+          
+          ButtonData:>{
+           "Info23730297449-5034692", {"ZhihuLinkGetRaw", "ZhihuLink`"}},
+          ButtonNote->"ZhihuLink`"], 
+         ButtonBox["$DirectoryH2MD",
+          BaseStyle->"InformationLinkLF",
+          
+          ButtonData:>{
+           "Info23730297449-5034692", {"$DirectoryH2MD", "ZhihuLink`"}},
+          ButtonNote->"ZhihuLink`"], 
+         ButtonBox["$ZhihuLinkDirectory",
+          BaseStyle->"InformationLinkLF",
+          
+          ButtonData:>{
+           "Info23730297449-5034692", {"$ZhihuLinkDirectory", "ZhihuLink`"}},
+          ButtonNote->"ZhihuLink`"]},
+        {
+         ButtonBox["ZhihuFollow",
+          BaseStyle->"InformationLinkLF",
+          
+          ButtonData:>{
+           "Info23730297449-5034692", {"ZhihuFollow", "ZhihuLink`"}},
+          ButtonNote->"ZhihuLink`"], 
+         ButtonBox["ZhihuLinkUserAnswer",
+          BaseStyle->"InformationLinkLF",
+          
+          ButtonData:>{
+           "Info23730297449-5034692", {"ZhihuLinkUserAnswer", "ZhihuLink`"}},
+          ButtonNote->"ZhihuLink`"], 
+         ButtonBox["$ZhihuAuth",
+          BaseStyle->"InformationLinkLF",
+          
+          ButtonData:>{
+           "Info23730297449-5034692", {"$ZhihuAuth", "ZhihuLink`"}},
+          ButtonNote->"ZhihuLink`"], ""}
+       },
+       DefaultBaseStyle->"InfoGrid",
+       GridBoxItemSize->{"Columns" -> {{
+            Scaled[0.2375]}}}]}
+    },
+    GridBoxAlignment->{"Columns" -> {{Left}}, "Rows" -> {{Baseline}}}]}, 
+   Dynamic[Typeset`open$$],
+   ImageSize->
+    Automatic]]], "Print", \
+"InfoCell",ExpressionUUID->"6073cfab-006b-4e41-9c60-1508b51b1d93"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"ZhihuLinkInit", "[", "]"}]], "Input",
+ CellLabel->"In[2]:=",ExpressionUUID->"9a7b073e-1cce-4f07-b618-41b8633aa676"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Quiet", "@", 
+  RowBox[{"ZhihuAnswerBackup", "[", "\"\<GalAster\>\"", "]"}]}]], "Input",
+ CellLabel->"In[3]:=",ExpressionUUID->"70f08a2c-c213-475a-b8dd-28d64b62a100"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ StyleBox[
+  InterpretationBox[Cell[BoxData[
+    FormBox["\<\"\:6b63\:5728\:6293\:53d6GalAster\:7684\:56de\:7b54\"\>", 
+     TextForm]], "InlineText",ExpressionUUID->
+    "59d1eba5-bc97-44a2-867f-1c03792d947d"],
+   Text["\:6b63\:5728\:6293\:53d6GalAster\:7684\:56de\:7b54"]],
+  StripOnInput->False,
+  LineColor->RGBColor[0, 0, 1],
+  FrontFaceColor->RGBColor[0, 0, 1],
+  BackFaceColor->RGBColor[0, 0, 1],
+  GraphicsColor->RGBColor[0, 0, 1],
+  FontColor->RGBColor[0, 0, 1]]], "Print",
+ CellLabel->
+  "\:6b63\:5728\:8ba1\:7b97In[3]:=",ExpressionUUID->"fe9ba4c7-f395-4643-a7f1-\
+67d366d0bf04"],
+
+Cell[BoxData[
+ StyleBox[
+  InterpretationBox[Cell[BoxData[
+    FormBox["\<\"\:5171\:6293\:53d6\:5230 91 \:4e2a\:56de\:7b54, \:8f6c\:6362\
+\:4e2d.....\"\>", TextForm]], "InlineText",ExpressionUUID->
+    "7ccc321b-e2ab-4671-be92-7060039393fd"],
+   Text["\:5171\:6293\:53d6\:5230 91 \:4e2a\:56de\:7b54, \
+\:8f6c\:6362\:4e2d....."]],
+  StripOnInput->False,
+  LineColor->RGBColor[0.6, 0.4, 0.2],
+  FrontFaceColor->RGBColor[0.6, 0.4, 0.2],
+  BackFaceColor->RGBColor[0.6, 0.4, 0.2],
+  GraphicsColor->RGBColor[0.6, 0.4, 0.2],
+  FontColor->RGBColor[0.6, 0.4, 0.2]]], "Print",
+ CellLabel->
+  "\:6b63\:5728\:8ba1\:7b97In[3]:=",ExpressionUUID->"c84c84e4-e80c-4ae6-bd39-\
+859e10179650"],
+
+Cell[BoxData[
+ RowBox[{
+  TagBox["\<\"Time Used: \"\>",
+   "EchoLabel"], " ", 
+  TemplateBox[{"14.454224299999998`","\"s\"","seconds","\"Seconds\""},
+   "Quantity"]}]], \
+"Echo",ExpressionUUID->"16c8ef77-f81c-48d1-846e-4838c40ef469"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"SystemOpen", "@", "$ZhihuLinkMarkdown"}], 
+  ";"}]], "Input",ExpressionUUID->"918bb471-7900-440f-b778-3fb9d37fb7a1"]
+},
+WindowSize->{775, 872},
+WindowMargins->{{Automatic, 317}, {-9, Automatic}},
+PrivateNotebookOptions->{"FileOutlineCache"->False},
+TrackCellChangeTimes->False,
+FrontEndVersion->"11.3 for Microsoft Windows (64-bit) (2018\:5e743\:67086\
+\:65e5)",
+StyleDefinitions->"Default.nb"
+]
+
