@@ -17,24 +17,32 @@
 (*4.如果修改了源代码，包含一份代码修改说明。*)
 (* ::Section:: *)
 (*函数说明*)
-BeginPackage["ZhihuLinkDirectory`"];
+BeginPackage["ZhihuLinkInit`"];
 (* ::Section:: *)
 (*程序包正体*)
+Needs["GeneralUtilities`"];
 (* ::Subsection::Closed:: *)
 (*主设置*)
-$ZhihuLinkDirectory::usage = "打开 ZhihuLink 的缓存目录.";
+$ZhihuLinkDirectory::usage = "ZhihuLink 的缓存目录.";
+$ZhihuCookie::usage ="";
+$ZhihuAuth::usage ="";
+ZhihuLinkInit::usage ="";
 Begin["`Private`"];
-$zdir=FileNameJoin[{$UserBaseDirectory,"ApplicationData","ZhihuLink"}];
-$sd=FileNameJoin[{$zdir,"stats"}];
-$fd=FileNameJoin[{$zdir,"follows"}];
+$ZhihuLinkDirectory=FileNameJoin[{$UserBaseDirectory,"ApplicationData","ZhihuLink"}];
+ZhihuLinkGetCheck[];
+ZhihuLinkInit[] :=Block[
+	{zc0},
+	$ZhihuCookie = Import[FindFile["zhihu.cookie"]];
+	zc0=Select[StringSplit[StringDelete[$ZhihuCookie," "],";"],StringTake[#,5]=="z_c0="&];
+	$ZhihuAuth="Bearer "<>StringTake[First@zc0,6;;-1];
+];
 (*防止未创建缓存文件夹导致的问题*)
-Quiet[CreateDirectory/@{$zdir,$sd,$fd}];
-$ZhihuLinkDirectory[]:=SystemOpen@$zdir;
+
 (* ::Subsection::Closed:: *)
 (*附加设置*)
 End[] ;
 SetAttributes[
-	{$ZhihuLinkDirectory},
+	{},
 	{Protected,ReadProtected}
 ];
 EndPackage[];

@@ -36,9 +36,9 @@ $DirectoryH2MD[]:=SystemOpen@$dir;
 Options[H2MD]={Module->Zhihu,Save->False};
 H2MD[input_String,OptionsPattern[]]:=Switch[
 	OptionValue[Module],
-	Zhihu,
+	"Zhihu",
 		ZhihuRule`ZhihuH2MD[input],
-	Zhuanlan,
+	"Zhuanlan",
 		ZhuanlanRule`ZhuanlanH2MD[input]
 ];
 (* ::Subsubsection:: *)

@@ -1,7 +1,7 @@
 (* Created with the Wolfram Language : www.wolfram.com *)
 Paclet[
     Name -> "ZhihuLink",
-    Version -> "0.1.16",
+    Version -> "0.1.26",
     WolframVersion -> "11.3+",
     Root -> ".",
     Internal -> False,

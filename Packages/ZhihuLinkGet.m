@@ -1,8 +1,8 @@
+(* Exported symbols added here with SymbolName::usage *) 
 ZhihuLinkGetRaw::usage = "";
 ZhihuLinkGet::usage = "";
 ZhihuLinkUserAnswer::usage = "";
 ZhihuLinkUserArticle::usage = "";
-Needs["GeneralUtilities`"];
 Begin["`Private`"];
 $APIURL = <|
    "Miscellaneous" -> <|
@@ -194,20 +194,14 @@ $APIURL = <|
        "RequireAuth" -> False|>
      |>
    |>;
-ZhihuLinkGetInit[] :=
-  Module[{},
-   $ZhihuCookie = Import[FindFile["zhihu.cookie"]]; 
-   $ZhihuAuth = Import[FindFile["zhihu.auth"]];
-   ];
-   
 ExportJSON[cat_, item_, name_String, content_, 
    OptionsPattern[{"CustomSavePath" -> None}]] := 
   Module[{path}, 
    If[(path = OptionValue["CustomSavePath"]) == None, 
-    path = FileNameJoin[{cat, item}]];
+    path = FileNameJoin[{$ZhihuLinkDirectory, cat, item}]];
    If[! DirectoryQ[path], CreateDirectory[path]]; 
    Export[FileNameJoin[{path, name <> ".json"}], content]
-  ];
+   ];
   
 ts[] := ToString@IntegerPart[1000 AbsoluteTime@Now];
 FixURL[url_String, "Members", 
@@ -216,46 +210,61 @@ FixURL[url_String, "Members",
     "https://www.zhihu.com/api/v4" <> StringDrop[url, 21];
   
 FixURL[url_String, _, _] := url;
-Options[ZhihuLinkGetRaw]={Extension->Nothing};
-ZhihuLinkGetRaw[cat_String, item_String, id_String, offset_: 0, limit_: 20,OptionsPattern[]] :=
-    GeneralUtilities`ToAssociations[
-	    URLExecute[
-		    HTTPRequest[<|
-			    "Scheme" -> $APIURL[cat]["Scheme"],
+Options[ZhihuLinkGetRaw] = {
+	"offset" -> 0,
+	"limit" -> 20,
+	"Extension" -> Nothing,
+	"RequireAuth" -> False
+};
+ZhihuLinkGetRaw[cat_String, item_String, id_String,OptionsPattern[]] :=
+	GeneralUtilities`ToAssociations[
+		URLExecute[
+			HTTPRequest[<|
+				"Scheme" -> $APIURL[cat]["Scheme"],
 				"Domain" -> $APIURL[cat]["Domain"],
-				"Headers" -> {"Cookie" -> $ZhihuCookie,
-					"authorization" -> If[$APIURL[cat][item]["RequireAuth"], $ZhihuAuth, Nothing]},
+				"Headers" -> {
+					"Cookie" -> $ZhihuCookie,
+					"authorization" ->If[$APIURL[cat][item]["RequireAuth"], $ZhihuAuth, Nothing]
+				},
 				"Path" -> {Evaluate[$APIURL[cat][item]["Path"][<|"id" -> id|>]]},
-				"Query" -> {"limit" -> limit, "offset" -> offset,OptionValue[Extension]}
-			|>],
-		    Authentication -> None]
-    ];
-  
-ZhihuLinkGetRaw[url_String, requireAuthQ_: False] := 
-  GeneralUtilities`ToAssociations[URLExecute[HTTPRequest[url,
-     <|"Headers" -> {
-        "Cookie" -> $ZhihuCookie,
-        "authorization" -> If[requireAuthQ, $ZhihuAuth, Nothing]}
-      	|>],
-    Authentication -> None]
-  ];
-  
-ZhihuLinkGet[cat_String, item_String, name_String, 
-   OptionsPattern[{"CustomSavePath" -> None, 
-     "CustomFilename" -> None}]] :=
-  Module[{current, data = {}, exportname, curURL},
+				"Query" -> {
+					"limit" -> OptionValue@"limit",
+					"offset" -> OptionValue@"offset",
+					Sequence@@OptionValue["Extension"]
+				}
+			|>], Authentication -> None]
+	];
+ZhihuLinkGetRaw[url_String, OptionsPattern[]] :=
+	GeneralUtilities`ToAssociations[
+		URLExecute[
+			HTTPRequest[url,<|
+				"Headers" -> {
+					"Cookie" -> $ZhihuCookie,
+					"authorization" -> If[OptionValue["RequireAuth"], $ZhihuAuth, Nothing]
+				}
+			|>], Authentication -> None]
+	];
+Options[ZhihuLinkGet] = {"Save" -> True, "CustomSavePath" -> None, 
+   "CustomFilename" -> None, "Extension" -> Nothing};
+ZhihuLinkGet[cat_String, item_String, name_String, OptionsPattern[]] :=
+    Module[{current, data = {}, exportname, curURL, 
+    saveQ = OptionValue["Save"]},
    (*Not implemented error*)
    
    If[! (KeyExistsQ[$APIURL, cat] && KeyExistsQ[$APIURL[cat], item]), 
     Return[$Failed]];
-   current = ZhihuLinkGetRaw[cat, item, name];
+   current = 
+    ZhihuLinkGetRaw[cat, item, name, 
+     "Extension" -> OptionValue["Extension"]];
    If[(exportname = OptionValue["CustomFilename"]) == None, 
     exportname = name];
    If[! KeyExistsQ[current, "paging"],
-    (*no paging, direct export*)
-    
-    ExportJSON[cat, item, exportname, current, 
-     "CustomSavePath" -> OptionValue["CustomSavePath"]],
+    (*no paging, direct export or save*)
+    If[! saveQ,
+     current,
+     ExportJSON[cat, item, exportname, current, 
+      "CustomSavePath" -> OptionValue["CustomSavePath"]]]
+    ,
     (*with paging, using next to fetch all*)
     
     data = Join[data, current["data"]];
@@ -268,18 +277,84 @@ ZhihuLinkGet[cat_String, item_String, name_String,
        StringTemplate["Unable to read from: `url`."][<|
          "url" -> curURL|>]]];
      ];
-    ExportJSON[cat, item, exportname, data, 
-     "CustomSavePath" -> OptionValue["CustomSavePath"]]
+    If[! saveQ,
+     data,
+     ExportJSON[cat, item, exportname, data, 
+      "CustomSavePath" -> OptionValue["CustomSavePath"]]]
     ]
    ];
-ZhihuLinkUserAnswer[id_String] := ZhihuLinkGet[
+Options[ZhihuLinkUserAnswer]={Extension->None,SortBy->"created",Save->True};
+ZhihuLinkUserAnswer[id_,OptionsPattern[]] := ZhihuLinkGet[
 	"Members", "Answers", id,
 	"CustomSavePath" -> "post",
-	"CustomFilename" -> StringTemplate["`id`.answer.`ts`"][<|"id" -> id, "ts" -> ts[] |>]
+	"CustomFilename" -> StringTemplate["`id`.answer.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
+	"Extension" -> {
+		Switch[OptionValue[Extension],
+			None,Nothing,
+			Min,"include"->"data[*].content,voteup_count",
+			All,"include"->"data[*].is_normal,suggest_edit,comment_count,collapsed_counts,reviewing_comments_count,can_comment,
+				content,voteup_count,reshipment_settings,comment_permission,mark_infos,created_time,updated_time,
+				relationship.voting,is_author,is_thanked,is_nothelp,upvoted_followees",
+			_,OptionValue[Extension]
+		],
+		"sort_by"->OptionValue[SortBy]
+	},
+	"Save"->OptionValue[Save]
 ];
-ZhihuLinkUserArticle[id_String] := ZhihuLinkGet[
+Options[ZhihuLinkUserArticle]={Extension->None,SortBy->"created",Save->True};
+ZhihuLinkUserArticle[id_,OptionsPattern[]] := ZhihuLinkGet[
 	"Members", "Articles", id,
 	"CustomSavePath" -> "post",
-	"CustomFilename" -> StringTemplate["`id`.article.`ts`"][<|"id" -> id, "ts" -> ts[] |>]
+	"CustomFilename" -> StringTemplate["`id`.article.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
+	"Extension" -> {
+		Switch[OptionValue[Extension],
+			None,Nothing,
+			Min,"include"->"data[*].content,voteup_count",
+			All,"include"->"data[*].is_normal", (*Todo: needs filter*)
+			_,OptionValue[Extension]
+		],
+		"sort_by"->OptionValue[SortBy]
+	},
+	"Save"->OptionValue[Save]
+];
+Options[ZhihuLinkUserFollowee]={Save->True};
+ZhihuLinkUserFollowee[id_,OptionsPattern[]] := ZhihuLinkGet[
+	"Members", "Followees", id,
+	"CustomSavePath" -> "follow",
+	"CustomFilename" -> StringTemplate["`id`.followees.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
+	"Save"->OptionValue[Save]
+];
+Options[ZhihuLinkUserFollower]={Save->True};
+ZhihuLinkUserFollower[id_,OptionsPattern[]] := ZhihuLinkGet[
+	"Members", "Followers", id,
+	"CustomSavePath" -> "follow",
+	"CustomFilename" -> StringTemplate["`id`.followers.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
+	"Save"->OptionValue[Save]
+];
+Options[ZhihuLinkUserFollowingQuestion]={Save->True};
+ZhihuLinkUserFollowingQuestion[id_,OptionsPattern[]] := ZhihuLinkGet["Members", "FollowingQuestions", id,
+   "CustomSavePath" -> "follow", 
+   "CustomFilename" -> StringTemplate["`id`.questions.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
+	"Save"->OptionValue[Save]
+];
+Options[ZhihuLinkUserFollowingTopic]={Save->True};
+ZhihuLinkUserFollowingTopic[id_,OptionsPattern[]] := ZhihuLinkGet["Members", "FollowingTopics", id,
+   "CustomSavePath" -> "follow", 
+   "CustomFilename" -> StringTemplate["`id`.topics.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
+	"Save"->OptionValue[Save]
+];
+Options[ZhihuLinkUserFollowingColumn]={Save->True};
+ZhihuLinkUserFollowingColumn[id_,OptionsPattern[]] := ZhihuLinkGet[
+	"Members", "FollowingColumns", id,
+	"CustomSavePath" -> "follow",
+	"CustomFilename" -> StringTemplate["`id`.columns.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
+	"Save"->OptionValue[Save]
+];
+Options[ZhihuLinkUserFollowingFavlist]={Save->True};
+ZhihuLinkUserFollowingFavlist[id_,OptionsPattern[]] := ZhihuLinkGet[
+	"Members", "FollowingFavlists", id,
+	"CustomSavePath" -> "follow",
+	"CustomFilename" -> StringTemplate["`id`.favlists.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
+	"Save"->OptionValue[Save]
 ];
 End[];
