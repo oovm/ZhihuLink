@@ -46,6 +46,8 @@ ZhihuConnect[cookie_String]:=Block[
 		"img"->img
 	|>]
 ];
+Format[ZhihuLinkUserObject[___],OutputForm]:="ZhihuLinkUserObject[<>]";
+Format[ZhihuLinkUserObject[___],InputForm]:="ZhihuLinkUserObject[<>]";
 ZhihuLinkUserObjectQ[asc_?AssociationQ]:=AllTrue[{"cookies","auth","user"},KeyExistsQ[asc,#]&];
 ZhihuLinkUserObjectQ[_]=False;
 ZhihuLinkUserObject/:MakeBoxes[obj:ZhihuLinkUserObject[asc_?ZhihuLinkUserObjectQ],form:(StandardForm|TraditionalForm)]:=Module[
@@ -67,7 +69,46 @@ ZhihuLinkUserObject/:MakeBoxes[obj:ZhihuLinkUserObject[asc_?ZhihuLinkUserObjectQ
 	]
 ];
 
-
+Answer2Data[post_]:=Block[
+	{title=post["question","title"],qa,link},
+	qa=<|"q"->post["question","id"],"a"->post["id"]|>;
+	link=StringTemplate["https://www.zhihu.com/questions/`q`/answers/`a`"][qa];
+	<|
+		"title"->Hyperlink[title,link],
+		"vote"->post["voteup_count"],
+		"comment"->post["comment_count"],
+		"created time"->FromUnixTime@post["created_time"]
+	|>
+];
+Article2Data[post_]:=Block[
+	{title=post["title"],link=post["url"]},
+	<|
+		"title"->Hyperlink[title,link],
+		"vote"->post["voteup_count"],
+		"comment"->post["comment_count"],
+		"created time"->FromUnixTime@post["created"]
+	|>
+];
+Options[ObjectPost]={SortBy->"vote",Times->True,Save->False};
+ObjectPost[user_String,OptionsPattern[]]:=Block[
+	{ans,art,data,now=Now},
+	If[OptionValue[Save],
+		ZhihuAnswerBackup[user];
+		Return[$ZhihuLinkMarkdown]
+	];
+	ans=ZhihuLinkUserAnswer[user,Save->False,Extension->"data[*].voteup_count,comment_count"];
+	art=ZhihuLinkUserArticle[user,Save->False,Extension->"data[*].voteup_count,comment_count"];
+	data=Reverse@Dataset[Join[Answer2Data/@ans,Article2Data/@art]][SortBy[OptionValue[SortBy]]];
+	If[OptionValue[Times],Echo[Now-now,"Time Used: "]];
+	Return@data
+];
+ZhihuLinkUserObject[ass_]["Post",ops_List]:=Block[
+	{
+		$ZhihuCookie=Lookup[ass,"cookie"],
+		$ZhihuAuth=Lookup[ass,"auth"]
+	},
+	ObjectPost@@ops
+];
 End[];
 
 EndPackage[];

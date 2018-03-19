@@ -20,7 +20,8 @@
 BeginPackage["ZhihuLinkInit`"];
 (* ::Section:: *)
 (*程序包正体*)
-Needs["GeneralUtilities`"];
+
+
 (* ::Subsection::Closed:: *)
 (*主设置*)
 $ZhihuLinkMarkdown::usage = "ZhihuLink 的缓存目录.";
@@ -28,8 +29,7 @@ $ZhihuLinkDirectory::usage = "ZhihuLink 的缓存目录.";
 $ZhihuCookie::usage ="";
 $ZhihuAuth::usage ="";
 ZhihuLinkInit::usage ="";
-Begin["`Private`"];
-$ZhihuLinkDirectory=FileNameJoin[{$UserBaseDirectory,"ApplicationData","ZhihuLink"}];
+Begin["`Init`"];
 ZhihuLinkGetCheck[];
 ZhihuLinkInit[] :=Block[
 	{zc0},
@@ -52,9 +52,7 @@ ZhihuCookiesReset[]:=CreateDialog[{
 	WindowTitle->"需要Token"
 ];
 
-(*防止未创建缓存文件夹导致的问题*)
-Quiet[CreateDirectory/@{$ZhihuLinkMarkdown}];
-$ZhihuLinkMarkdown=FileNameJoin[{$UserBaseDirectory,"ApplicationData","HTML2Markdown","Zhihu"}];
+
 (* ::Subsection::Closed:: *)
 (*附加设置*)
 End[] ;

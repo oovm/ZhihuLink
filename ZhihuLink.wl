@@ -1,1 +1,2 @@
-Get["ZhihuLink`ZhihuLinkLoader`"]; 
+Get["ZhihuLink`ZhihuLinkLoader`"];
+Needs["GeneralUtilities`"];
