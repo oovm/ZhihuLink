@@ -1,22 +1,38 @@
+(* ::Package:: *)
+(* ::Title:: *)
+(*ZhihuLinkRaw*)
+(* ::Subchapter:: *)
+(*程序包介绍*)
+(* ::Text:: *)
+(*Mathematica Package*)
+(*Created by Mathematica Plugin for IntelliJ IDEA*)
+(**)
+(* ::Text:: *)
+(*Creation Date: 2018-03-08*)
+(*Copyright: Mozilla Public License Version 2.0*)
+(* ::Program:: *)
+(*1.软件产品再发布时包含一份原始许可声明和版权声明。*)
+(*2.提供快速的专利授权。*)
+(*3.不得使用其原始商标。*)
+(*4.如果修改了源代码，包含一份代码修改说明。*)
+(* ::Section:: *)
+(*函数说明*)
+BeginPackage["ZhihuLinkTemp`"];
+(* ::Section:: *)
+(*程序包正体*)
+(* ::Subsection::Closed:: *)
+(*主设置*)
 $ZhihuCookies::usage = "知乎Cookies, 有效期约一个月.";
 ZhihuStats::usage = "ZhihuStats[id] 获取用户的数据";
 ZhihuFollow::usage = "ZhihuFollow[id] 获取用户的关注者数据.";
 ZhihuCookiesReset::usage = "修改你的 Zhihu Cookies.";
 Begin["`Private`"];
+(* ::Subsection::Closed:: *)
+(*主体代码*)
+(* ::Subsubsection:: *)
+(*Keys*)
 $ZhihuLinkAutoSave=True;
-If[FindFile["zhihu.cookies"] === $Failed,
-	$ZhihuCookies = "";
-	"未检测到 zhihu.cookies 文件\n
-	请使用 ZhihuCookiesReset[] 设置你的cookies.",
-	$ZhihuCookies = Import@FindFile["zhihu.cookies"]
-];
-ZhihuCookiesReset[]:=CreateDialog[{
-	TextCell["粘贴你的Cookies(不需要是字符型)"],
-	InputField[Dynamic[$ZhihuCookies],String,ImageSize->{400,400/GoldenRatio^2}],
-	DefaultButton[DialogReturn[$ZhihuCookies]]
-	},
-	WindowTitle->"需要Token"
-];
+
 $keywordsMin={
 	{"name","用户名"},
 	{"url_token","ID"},
@@ -45,6 +61,8 @@ $keywordsNormal={
 	{"pins_count","想法数"},
 	{TimeObject,"时间戳"}
 };
+(* ::Subsubsection:: *)
+(*ZhihuStats*)
 ZhihuLinkRaw::para="非法参数 `1` !";
 Options[ZhihuStats]={Return->Min,Raw->False};
 $StatsNeeds="locations,employments,gender,educations,business,voteup_count,thanked_Count,follower_count,cover_url,
@@ -85,6 +103,8 @@ ZhihuStats[name_String,OptionsPattern[]]:=Block[
 			Return@Missing["NotAvailable"]
 	]
 ];
+(* ::Subsubsection:: *)
+(*ZhihuFollow*)
 ZhihuFolloweesGet[name_String,offset_Integer]:=Block[
 	{get,needs,now=Now},
 	needs="data[*].follower_count,voteup_count,favorited_count,thanked_count";
@@ -117,8 +137,14 @@ ZhihuFollow[name_String,OptionsPattern[]]:=Block[
 		Return@Missing["NotAvailable"]
 	]
 ];
+
+
+
+(* ::Subsection::Closed:: *)
+(*附加设置*)
 End[] ;
 SetAttributes[
 	{ },
 	{Protected,ReadProtected}
 ];
+EndPackage[];

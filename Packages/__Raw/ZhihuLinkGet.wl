@@ -4,358 +4,382 @@
 
 (* Created by the Wolfram Workbench 12 Mar 2018 *)
 
-BeginPackage["ZhihuLinkGet`"]
+BeginPackage["ZhihuLinkGet`"];
 (* Exported symbols added here with SymbolName::usage *) 
 
 ZhihuLinkGetRaw::usage = "";
 ZhihuLinkGet::usage = "";
+ZhihuLinkUserAnswer::usage = "";
+ZhihuLinkUserArticle::usage = "";
+ZhihuLinkUserFollowingFavlist::usage = "";
+ZhihuLinkUserFollowingColumn::usage = "";
+ZhihuLinkUserFollowingTopic::usage = "";
+ZhihuLinkUserFollowingQuestion::usage = "";
+ZhihuLinkUserFollower::usage = "";
+ZhihuLinkUserFollowee::usage = "";
 
-Begin["`Private`"]
+Begin["`Private`"];
 (* Implementation of the package *)
 
-Needs["GeneralUtilities`"];
-
 $APIURL = <|
-   "Miscellaneous" -> <|
-     "Scheme" -> "https",
-     "Domain" -> "www.zhihu.com",
-     (*\:7528\:6237\:4fe1\:606f*)
-     
-     "Profile" -> <|"Path" -> StringTemplate["api/v4/members/`id`"], 
-       "RequireAuth" -> False|>,
-     (*\:8bdd\:9898\:4fe1\:606f*)
-     
-     "Topic" -> <|"Path" -> StringTemplate["api/v4/topics/`id`"], 
-       "RequireAuth" -> False|>,
-     (*\:95ee\:9898\:4fe1\:606f*)
-     
-     "Question" -> <|
-       "Path" -> StringTemplate["api/v4/questions/`id`"], 
-       "RequireAuth" -> False|>,
-     (*\:56de\:7b54\:4fe1\:606f*)
-     
-     "Answer" -> <|"Path" -> StringTemplate["api/v4/answers/`id`"], 
-       "RequireAuth" -> False|>,
-     (*\:79c1\:4fe1*)
-     
-     "Messages" -> <|"Path" -> StringTemplate["api/v4/messages"], 
-       "RequireAuth" -> True|>,
-     (*\:901a\:77e5*)
-     
-     "Notifications" -> <|
-       "Path" -> StringTemplate["api/v4/default-notifications"], 
-       "RequireAuth" -> True|>
-     |>,
-   "Members" -> <|
-     "Scheme" -> "https",
-     "Domain" -> "www.zhihu.com",
-     (*\:5173\:6ce8\:7684\:4eba*)
-     
-     "Followees" -> <|
-       "Path" -> StringTemplate["api/v4/members/`id`/followees"], 
-       "RequireAuth" -> False|>,
-     (*\:5173\:6ce8\:8005*)
-     
-     "Followers" -> <|
-       "Path" -> StringTemplate["api/v4/members/`id`/followers"], 
-       "RequireAuth" -> False|>,
-     (*\:5173\:6ce8\:7684\:95ee\:9898*)
-     
-     "FollowingQuestions" -> <|
-       "Path" -> 
-        StringTemplate["api/v4/members/`id`/following-questions"], 
-       "RequireAuth" -> False|>,
-     (*\:5173\:6ce8\:7684\:8bdd\:9898*)
-     
-     "FollowingTopics" -> <|
-       "Path" -> 
-        StringTemplate[
-         "api/v4/members/`id`/following-topic-contributions"], 
-       "RequireAuth" -> False|>,
-     (*\:5173\:6ce8\:7684\:4e13\:680f*)
-     
-     "FollowingColumns" -> <|
-       "Path" -> 
-        StringTemplate["api/v4/members/`id`/following-columns"], 
-       "RequireAuth" -> False|>,
-     (*\:5173\:6ce8\:7684\:6536\:85cf\:5939*)
-     
-     "FollowingFavlists" -> <|
-       "Path" -> 
-        StringTemplate["api/v4/members/`id`/following-favlists"], 
-       "RequireAuth" -> False|>,
-     (*\:63d0\:95ee*)
-     
-     "Questions" -> <|
-       "Path" -> StringTemplate["api/v4/members/`id`/questions"], 
-       "RequireAuth" -> False|>,
-     (*\:56de\:7b54*)
-     
-     "Answers" -> <|
-       "Path" -> StringTemplate["api/v4/members/`id`/answers"], 
-       "RequireAuth" -> False|>,
-     (*\:60f3\:6cd5*)
-     
-     "Pins" -> <|"Path" -> StringTemplate["api/v4/members/`id`/pins"],
-        "RequireAuth" -> False|>,
-     (*\:6587\:7ae0*)
-     
-     "Articles" -> <|
-       "Path" -> StringTemplate["api/v4/members/`id`/articles"], 
-       "RequireAuth" -> False|>,
-     (*\:4e13\:680f*)
-     
-     "Columns" -> <|
-       "Path" -> 
-        StringTemplate["api/v4/members/`id`/column-contributions"], 
-       "RequireAuth" -> False|>,
-     (*\:6536\:85cf*)
-     
-     "Favlists" -> <|
-       "Path" -> StringTemplate["api/v4/members/`id`/favlists"], 
-       "RequireAuth" -> False|>,
-     (*\:52a8\:6001*)
-     
-     "Activities" -> <|
-       "Path" -> StringTemplate["api/v4/members/`id`/activities"], 
-       "RequireAuth" -> True|>
-     |>,
-   "Questions" -> <|
-     "Scheme" -> "https",
-     "Domain" -> "www.zhihu.com",
-     (*\:5173\:6ce8\:8005*)
-     
-     "Followers" -> <|
-       "Path" -> 
-        StringTemplate["api/v4/questions/`id`/concerned_followers"], 
-       "RequireAuth" -> False|>,
-     (*\:8bc4\:8bba*)
-     
-     "Comments" -> <|
-       "Path" -> StringTemplate["api/v4/questions/`id`/comments"], 
-       "RequireAuth" -> False|>,(*\:88ab\:9080\:8bf7\:7684\:4eba*)
-     
-     "Invitees" -> <|
-       "Path" -> StringTemplate["api/v4/questions/`id`/invitees"], 
-       "RequireAuth" -> False|>,(*\:53ef\:80fd\:88ab\:9080\:8bf7\:7684\:4eba*)
-     
-     "InvitationCandidates" -> <|
-       "Path" -> 
-        StringTemplate["api/v4/questions/`id`/invitation-candidates"],
-        "RequireAuth" -> False|>
-     |>,
-   "Answers" -> <|
-     "Scheme" -> "https",
-     "Domain" -> "www.zhihu.com",
-     (*\:70b9\:8d5e\:8005*)
-     
-     "Upvoters" -> <|
-       "Path" -> 
-        StringTemplate["api/v4/answers/`id`/concerned_upvoters"], 
-       "RequireAuth" -> False|>,
-     (*\:8bc4\:8bba*)
-     
-     "Comments" -> <|
-       "Path" -> StringTemplate["api/v4/answers/`id`/comments"], 
-       "RequireAuth" -> False|>
-     |>,
-   "Pins" -> <|
-     "Scheme" -> "https",
-     "Domain" -> "www.zhihu.com",
-     (*\:8bc4\:8bba*)
-     
-     "Comments" -> <|
-       "Path" -> StringTemplate["api/v4/pins/`id`/comments"], 
-       "RequireAuth" -> False|>
-     |>,
-   "Topics" -> <|
-     "Scheme" -> "https",
-     "Domain" -> "www.zhihu.com",
-     (*\:5173\:6ce8\:8005*)
-     
-     "Followers" -> <|
-       "Path" -> StringTemplate["api/v4/topics/`id`/followers"], 
-       "RequireAuth" -> False|>
-     |>,
-   "Articles" -> <|
-     "Scheme" -> "https",
-     "Domain" -> "zhuanlan.zhihu.com",
-     (*\:70b9\:8d5e\:8005*)
-     
-     "Upvoters" -> <|
-       "Path" -> StringTemplate["api/posts/`id`/likers"], 
-       "RequireAuth" -> False|>,
-     (*\:6587\:7ae0\:8bc4\:8bba*)
-     
-     "Comments" -> <|
-       "Path" -> StringTemplate["api/posts/`id`/comments"], 
-       "RequireAuth" -> False|>
-     |>,
-   "Columns" -> <|
-     "Scheme" -> "https",
-     "Domain" -> "zhuanlan.zhihu.com",
-     (*\:5173\:6ce8\:8005*)
-     
-     "Followers" -> <|
-       "Path" -> StringTemplate["api/columns/`id`/followers"], 
-       "RequireAuth" -> False|>,
-     (*\:6587\:7ae0*)
-     
-     "Posts" -> <|"Path" -> StringTemplate["api/columns/`id`/posts"], 
-       "RequireAuth" -> False|>
-     |>
-   |>;
+	"Miscellaneous" -> <|
+		"Scheme" -> "https",
+		"Domain" -> "www.zhihu.com",
 
-ZhihuLinkGetInit[] :=
-  Module[{},
-   $ZhihuCookie = Import[FindFile["zhihu.cookie"]]; 
-   $ZhihuAuth = 
-	 "Bearer " <> 
-	  StringCases[$ZhihuCookie, 
-	    "z_c0" ~~ Shortest[__] ~~ "\"" ~~ Shortest[auth__] ~~ "\"" :> 
-	     auth][[1]];
-   ];
-   
-ExportJSON[cat_, item_, name_String, content_, 
-   OptionsPattern[{"CustomSavePath" -> None}]] := 
-  Module[{path}, 
-   If[(path = OptionValue["CustomSavePath"]) == None, 
-    path = FileNameJoin[{$ZhihuLinkDir, cat, item}]];
-   If[! DirectoryQ[path], CreateDirectory[path]]; 
-   Export[FileNameJoin[{path, name <> ".json"}], content]
-   ];
+		"Profile" -> <|(*用户信息*)
+			"Path" -> StringTemplate["api/v4/members/`id`"],
+			"RequireAuth" -> False
+		|>,
+
+		"Topic" -> <|(*话题信息*)
+			"Path" -> StringTemplate["api/v4/topics/`id`"],
+			"RequireAuth" -> False
+		|>,
+
+		"Question" -> <|(*问题信息*)
+			"Path" -> StringTemplate["api/v4/questions/`id`"],
+			"RequireAuth" -> False
+		|>,
+
+		"Answer" -> <|(*回答信息*)
+			"Path" -> StringTemplate["api/v4/answers/`id`"],
+			"RequireAuth" -> False
+		|>,
+
+		"Messages" -> <|(*私信*)
+			"Path" -> StringTemplate["api/v4/messages"],
+			"RequireAuth" -> True
+		|>,
+
+		"Notifications" -> <|(*通知*)
+			"Path" -> StringTemplate["api/v4/default-notifications"],
+			"RequireAuth" -> True
+		|>
+	|>,
+	"Members" -> <|
+		"Scheme" -> "https",
+		"Domain" -> "www.zhihu.com",
+
+		"Followees" -> <|(*关注的人*)
+			"Path" -> StringTemplate["api/v4/members/`id`/followees"],
+			"RequireAuth" -> False
+		|>,
+
+		"Followers" -> <|(*关注者*)
+			"Path" -> StringTemplate["api/v4/members/`id`/followers"],
+			"RequireAuth" -> False
+		|>,
+
+		"FollowingQuestions" -> <|(*关注的问题*)
+			"Path" -> StringTemplate["api/v4/members/`id`/following-questions"],
+			"RequireAuth" -> False
+		|>,
+
+		"FollowingTopics" -> <|(*关注的话题*)
+			"Path" -> StringTemplate["api/v4/members/`id`/following-topic-contributions"],
+			"RequireAuth" -> False
+		|>,
+
+		"FollowingColumns" -> <|(*关注的专栏*)
+			"Path" -> StringTemplate["api/v4/members/`id`/following-columns"],
+			"RequireAuth" -> False
+		|>,
+
+		"FollowingFavlists" -> <|(*关注的收藏夹*)
+			"Path" -> StringTemplate["api/v4/members/`id`/following-favlists"],
+			"RequireAuth" -> False
+		|>,
+
+		"Questions" -> <|(*提问*)
+			"Path" -> StringTemplate["api/v4/members/`id`/questions"],
+			"RequireAuth" -> False
+		|>,
+
+		"Answers" -> <|(*回答*)
+			"Path" -> StringTemplate["api/v4/members/`id`/answers"],
+			"RequireAuth" -> False
+		|>,
+
+		"Pins" -> <|(*想法*)
+			"Path" -> StringTemplate["api/v4/members/`id`/pins"],
+			"RequireAuth" -> False
+		|>,
+
+		"Articles" -> <|(*文章*)
+			"Path" -> StringTemplate["api/v4/members/`id`/articles"],
+			"RequireAuth" -> False
+		|>,
+
+		"Columns" -> <|(*专栏*)
+			"Path" -> StringTemplate["api/v4/members/`id`/column-contributions"],
+			"RequireAuth" -> False
+		|>,
+
+		"Favlists" -> <|(*收藏*)
+			"Path" -> StringTemplate["api/v4/members/`id`/favlists"],
+			"RequireAuth" -> False|>,
+
+		"Activities" -> <|(*动态*)
+			"Path" -> StringTemplate["api/v4/members/`id`/activities"],
+			"RequireAuth" -> True
+		|>
+	|>,
+	"Questions" -> <|
+		"Scheme" -> "https",
+		"Domain" -> "www.zhihu.com",
+
+		"Followers" -> <|(*关注者*)
+			"Path" -> StringTemplate["api/v4/questions/`id`/concerned_followers"],
+			"RequireAuth" -> False
+		|>,
+
+		"Comments" -> <|(*评论*)
+			"Path" -> StringTemplate["api/v4/questions/`id`/comments"],
+			"RequireAuth" -> False
+		|>,
+
+		"Invitees" -> <|(*被邀请的人*)
+			"Path" -> StringTemplate["api/v4/questions/`id`/invitees"],
+			"RequireAuth" -> False
+		|>,
+
+		"InvitationCandidates" -> <|(*可能被邀请的人*)
+			"Path" ->StringTemplate["api/v4/questions/`id`/invitation-candidates"],
+			"RequireAuth" -> False
+		|>
+	|>,
+	"Answers" -> <|
+		"Scheme" -> "https",
+		"Domain" -> "www.zhihu.com",
+
+		"Upvoters" -> <|(*点赞者*)
+			"Path" ->StringTemplate["api/v4/answers/`id`/concerned_upvoters"],
+			"RequireAuth" -> False
+		|>,
+
+		"Comments" -> <|(*评论*)
+			"Path" -> StringTemplate["api/v4/answers/`id`/comments"],
+			"RequireAuth" -> False
+		|>
+	|>,
+	"Pins" -> <|
+		"Scheme" -> "https",
+		"Domain" -> "www.zhihu.com",
+
+		"Comments" -> <|(*评论*)
+			"Path" -> StringTemplate["api/v4/pins/`id`/comments"],
+			"RequireAuth" -> False
+		|>
+	|>,
+	"Topics" -> <|
+		"Scheme" -> "https",
+		"Domain" -> "www.zhihu.com",
+
+		"Followers" -> <|(*关注者*)
+			"Path" -> StringTemplate["api/v4/topics/`id`/followers"],
+			"RequireAuth" -> False
+		|>
+	|>,
+	"Articles" -> <|
+		"Scheme" -> "https",
+		"Domain" -> "zhuanlan.zhihu.com",
+
+		"Upvoters" -> <|(*点赞者*)
+			"Path" -> StringTemplate["api/posts/`id`/likers"],
+			"RequireAuth" -> False
+		|>,
+
+
+		"Comments" -> <|(*文章评论*)
+			"Path" -> StringTemplate["api/posts/`id`/comments"],
+			"RequireAuth" -> False
+		|>
+	|>,
+	"Columns" -> <|
+		"Scheme" -> "https",
+		"Domain" -> "zhuanlan.zhihu.com",
+
+		"Followers" -> <|(*关注者*)
+			"Path" -> StringTemplate["api/columns/`id`/followers"],
+			"RequireAuth" -> False
+		|>,
+
+		"Posts" -> <|(*文章*)
+			"Path" -> StringTemplate["api/columns/`id`/posts"],
+			"RequireAuth" -> False
+		|>
+	|>
+|>;
+
+
+ExportJSON[cat_, item_, name_String, content_,
+	OptionsPattern[{"CustomSavePath" -> None}]] :=Module[
+	{path},
+	If[(path = OptionValue["CustomSavePath"]) == None,
+		path = FileNameJoin[{$ZhihuLinkDirectory, cat, item}]
+	];
+	If[! DirectoryQ[path], CreateDirectory[path]];
+	Export[FileNameJoin[{path, name <> ".json"}], content]
+];
   
 ts[] := ToString@IntegerPart[1000 AbsoluteTime@Now];
 
-FixURL[url_String, "Members", 
-   "FollowingQuestions" | "Answers" | "Questions" | "Articles" | 
-    "Columns" | "FollowingColumns"] := 
-    "https://www.zhihu.com/api/v4" <> StringDrop[url, 21];
+FixURL[url_String,
+	"Members","FollowingQuestions" | "Answers" | "Questions" |
+     "Articles" |"Columns" | "FollowingColumns"
+] := "https://www.zhihu.com/api/v4" <> StringDrop[url, 21];
   
 FixURL[url_String, _, _] := url;
 
-Options[ZhihuLinkGetRaw] = {"offset" -> 0, "limit" -> 20, 
-   "Extension" -> Nothing, "RequireAuth" -> False};
-ZhihuLinkGetRaw[cat_String, item_String, id_String, 
-   OptionsPattern[]] := 
-  GeneralUtilities`ToAssociations[
-   URLExecute[
-    HTTPRequest[<|
-      		"Scheme" -> $APIURL[cat]["Scheme"],
-      		"Domain" -> $APIURL[cat]["Domain"],
-      		"Headers" -> {"Cookie" -> $ZhihuCookie, 
-        "authorization" -> 
-         If[$APIURL[cat][item]["RequireAuth"], $ZhihuAuth, Nothing]},
-      "Path" -> {Evaluate[$APIURL[cat][item]["Path"][<|"id" -> id|>]]},
-      "Query" -> {"limit" -> OptionValue@"limit", 
-        "offset" -> OptionValue@"offset", OptionValue["Extension"]}
-      	|>], Authentication -> None]];
-  
-ZhihuLinkGetRaw[url_String, OptionsPattern[]] := 
-  GeneralUtilities`ToAssociations[
-   URLExecute[
-    HTTPRequest[
-     url, <|	
-      "Headers" -> {"Cookie" -> $ZhihuCookie, 
-        "authorization" -> 
-         If[OptionValue["RequireAuth"], $ZhihuAuth, Nothing]}
-      	|>], Authentication -> None]];
-  
-Options[ZhihuLinkGet] = {"Save" -> True, "CustomSavePath" -> None, 
-   "CustomFilename" -> None, "Extension" -> Nothing};
-ZhihuLinkGet[cat_String, item_String, name_String, OptionsPattern[]] :=
+Options[ZhihuLinkGetRaw] = {
+	"offset" -> 0,
+	"limit" -> 20,
+	"Extension" -> Nothing,
+	"RequireAuth" -> False
+};
+ZhihuLinkGetRaw[cat_String, item_String, id_String,OptionsPattern[]] :=
+	GeneralUtilities`ToAssociations[
+		URLExecute[
+			HTTPRequest[<|
+				"Scheme" -> $APIURL[cat]["Scheme"],
+				"Domain" -> $APIURL[cat]["Domain"],
+				"Headers" -> {
+					"Cookie" -> $ZhihuCookie,
+					"authorization" ->If[$APIURL[cat][item]["RequireAuth"], $ZhihuAuth, Nothing]
+				},
+				"Path" -> {Evaluate[$APIURL[cat][item]["Path"][<|"id" -> id|>]]},
+				"Query" -> {
+					"limit" -> OptionValue@"limit",
+					"offset" -> OptionValue@"offset",
+					Sequence@@OptionValue["Extension"]
+				}
+			|>], Authentication -> None]
+	];
 
-    Module[{current, data = {}, exportname, curURL, 
-    saveQ = OptionValue["Save"]},
-   (*Not implemented error*)
-   
-   If[! (KeyExistsQ[$APIURL, cat] && KeyExistsQ[$APIURL[cat], item]), 
-    Return[$Failed]];
-   current = 
-    ZhihuLinkGetRaw[cat, item, name, 
-     "Extension" -> OptionValue["Extension"]];
-   If[(exportname = OptionValue["CustomFilename"]) == None, 
-    exportname = name];
-   If[! KeyExistsQ[current, "paging"],
-    (*no paging, direct export or save*)
-    If[! saveQ,
-     current,
-     ExportJSON[cat, item, exportname, current, 
-      "CustomSavePath" -> OptionValue["CustomSavePath"]]]
-    ,
-    (*with paging, using next to fetch all*)
-    
-    data = Join[data, current["data"]];
-    While[! current["paging"]["is_end"],
-     curURL = FixURL[current["paging"]["next"], cat, item];
-     current = ZhihuLinkGetRaw[curURL];
-     If[AssociationQ[current],
-      data = Join[data, current["data"]],
-      Echo[
-       StringTemplate["Unable to read from: `url`."][<|
-         "url" -> curURL|>]]];
-     ];
-    If[! saveQ,
-     data,
-     ExportJSON[cat, item, exportname, data, 
-      "CustomSavePath" -> OptionValue["CustomSavePath"]]]
-    ]
-   ];
-   
-ZhihuLinkUserAnswer[id_] := 
-  ZhihuLinkGet["Members", "Answers", id, "CustomSavePath" -> "post", 
-   "CustomFilename" -> 
-    StringTemplate["`id`.answer.`ts`"][<|"id" -> id, "ts" -> ts[] |>]];
-    
-ZhihuLinkUserArticle[id_] := 
-  ZhihuLinkGet["Members", "Articles", id, "CustomSavePath" -> "post", 
-   "CustomFilename" -> 
-    StringTemplate["`id`.article.`ts`"][<|"id" -> id, 
-      "ts" -> ts[] |>]];
-      
-ZhihuLinkUserFollowee[id_] := 
-  ZhihuLinkGet["Members", "Followees", id, 
-   "CustomSavePath" -> "follow", 
-   "CustomFilename" -> 
-    StringTemplate["`id`.followees.`ts`"][<|"id" -> id, 
-      "ts" -> ts[] |>]];
-      
-ZhihuLinkUserFollower[id_] := 
-  ZhihuLinkGet["Members", "Followers", id, 
-   "CustomSavePath" -> "follow", 
-   "CustomFilename" -> 
-    StringTemplate["`id`.followers.`ts`"][<|"id" -> id, 
-      "ts" -> ts[] |>]];
-      
-ZhihuLinkUserFollowingQuestion[id_] := 
-  ZhihuLinkGet["Members", "FollowingQuestions", id, 
-   "CustomSavePath" -> "follow", 
-   "CustomFilename" -> 
-    StringTemplate["`id`.questions.`ts`"][<|"id" -> id, 
-      "ts" -> ts[] |>]];
-      
-ZhihuLinkUserFollowingTopic[id_] := 
-  ZhihuLinkGet["Members", "FollowingTopics", id, 
-   "CustomSavePath" -> "follow", 
-   "CustomFilename" -> 
-    StringTemplate["`id`.topics.`ts`"][<|"id" -> id, "ts" -> ts[] |>]];
-    
-ZhihuLinkUserFollowingColumn[id_] := 
-  ZhihuLinkGet["Members", "FollowingColumns", id, 
-   "CustomSavePath" -> "follow", 
-   "CustomFilename" -> 
-    StringTemplate["`id`.columns.`ts`"][<|"id" -> id, 
-      "ts" -> ts[] |>]];
-      
-ZhihuLinkUserFollowingFavlist[id_] := 
-  ZhihuLinkGet["Members", "FollowingFavlists", id, 
-   "CustomSavePath" -> "follow", 
-   "CustomFilename" -> 
-    StringTemplate["`id`.favlists.`ts`"][<|"id" -> id, 
-      "ts" -> ts[] |>]];
+ZhihuLinkGetRaw[url_String, OptionsPattern[]] :=
+	GeneralUtilities`ToAssociations[
+		URLExecute[
+			HTTPRequest[url,<|
+				"Headers" -> {
+					"Cookie" -> $ZhihuCookie,
+					"authorization" -> If[OptionValue["RequireAuth"], $ZhihuAuth, Nothing]
+				}
+			|>], Authentication -> None]
+	];
 
-End[]
+Options[ZhihuLinkGet] = {
+	"Save" -> True,
+	"CustomSavePath" -> None,
+	"CustomFilename" -> None,
+	"Extension" -> Nothing
+};
+ZhihuLinkGet[cat_String, item_String, name_String, OptionsPattern[]] := Module[
+	{current, data = {}, exportname, curURL,saveQ = OptionValue["Save"]},
+	(*Not implemented error*)
+	If[! (KeyExistsQ[$APIURL, cat] && KeyExistsQ[$APIURL[cat], item]),Return[$Failed]];
+	current = ZhihuLinkGetRaw[cat, item, name,"Extension" -> OptionValue["Extension"]];
+	If[(exportname = OptionValue["CustomFilename"]) == None,exportname = name];
+	If[! KeyExistsQ[current, "paging"],
+		(*no paging, direct export or save*)
+		If[!saveQ,
+			current,
+			ExportJSON[cat, item, exportname, current,"CustomSavePath" -> OptionValue["CustomSavePath"]]
+		],
+		(*with paging, using next to fetch all*)
+		data = Join[data, current["data"]];
+		While[! current["paging"]["is_end"],
+			curURL = FixURL[current["paging"]["next"], cat, item];
+			current = ZhihuLinkGetRaw[curURL];
+			If[AssociationQ[current],data = Join[data, current["data"]],
+				Echo[StringTemplate["Unable to read from: `url`."][<|"url" -> curURL|>]]
+			];
+		];
+		If[!saveQ,
+			data,
+			ExportJSON[cat, item, exportname, data,	"CustomSavePath" -> OptionValue["CustomSavePath"]]
+		]
+	]
+];
+
+(* ?????????????????????????????????? *)
+Options[ZhihuLinkUserAnswer]={Extension->None,SortBy->"created",Save->True};
+ZhihuLinkUserAnswer[id_,OptionsPattern[]] := ZhihuLinkGet[
+	"Members", "Answers", id,
+	"CustomSavePath" -> "post",
+	"CustomFilename" -> StringTemplate["`id`.answer.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
+	"Extension" -> {
+		Switch[OptionValue[Extension],
+			None,Nothing,
+			Min,"include"->"data[*].content,voteup_count",
+			All,"include"->"data[*].is_normal,suggest_edit,comment_count,collapsed_counts,reviewing_comments_count,can_comment,
+				content,voteup_count,reshipment_settings,comment_permission,mark_infos,created_time,updated_time,
+				relationship.voting,is_author,is_thanked,is_nothelp,upvoted_followees",
+			_,OptionValue[Extension]
+		],
+		"sort_by"->OptionValue[SortBy]
+	},
+	"Save"->OptionValue[Save]
+];
+
+Options[ZhihuLinkUserArticle]={Extension->None,SortBy->"created",Save->True};
+ZhihuLinkUserArticle[id_,OptionsPattern[]] := ZhihuLinkGet[
+	"Members", "Articles", id,
+	"CustomSavePath" -> "post",
+	"CustomFilename" -> StringTemplate["`id`.article.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
+	"Extension" -> {
+		Switch[OptionValue[Extension],
+			None,Nothing,
+			Min,"include"->"data[*].content,voteup_count",
+			All,"include"->"data[*].is_normal", (*Todo: needs filter*)
+			_,OptionValue[Extension]
+		],
+		"sort_by"->OptionValue[SortBy]
+	},
+	"Save"->OptionValue[Save]
+];
+
+(*#13*)
+Options[ZhihuLinkUserFollowee]={Save->True};
+ZhihuLinkUserFollowee[id_,OptionsPattern[]] := ZhihuLinkGet[
+	"Members", "Followees", id,
+	"CustomSavePath" -> "follow",
+	"CustomFilename" -> StringTemplate["`id`.followees.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
+	"Save"->OptionValue[Save]
+];
+Options[ZhihuLinkUserFollower]={Save->True};
+ZhihuLinkUserFollower[id_,OptionsPattern[]] := ZhihuLinkGet[
+	"Members", "Followers", id,
+	"CustomSavePath" -> "follow",
+	"CustomFilename" -> StringTemplate["`id`.followers.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
+	"Save"->OptionValue[Save]
+];
+Options[ZhihuLinkUserFollowingQuestion]={Save->True};
+ZhihuLinkUserFollowingQuestion[id_,OptionsPattern[]] := ZhihuLinkGet["Members", "FollowingQuestions", id,
+	"CustomSavePath" -> "follow",
+	"CustomFilename" -> StringTemplate["`id`.questions.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
+	"Save"->OptionValue[Save]
+];
+Options[ZhihuLinkUserFollowingTopic]={Save->True};
+ZhihuLinkUserFollowingTopic[id_,OptionsPattern[]] := ZhihuLinkGet["Members", "FollowingTopics", id,
+	"CustomSavePath" -> "follow", 
+	"CustomFilename" -> StringTemplate["`id`.topics.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
+	"Save"->OptionValue[Save]
+];
+Options[ZhihuLinkUserFollowingColumn]={Save->True};
+ZhihuLinkUserFollowingColumn[id_,OptionsPattern[]] := ZhihuLinkGet[
+	"Members", "FollowingColumns", id,
+	"CustomSavePath" -> "follow",
+	"CustomFilename" -> StringTemplate["`id`.columns.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
+	"Save"->OptionValue[Save]
+];
+Options[ZhihuLinkUserFollowingFavlist]={Save->True};
+ZhihuLinkUserFollowingFavlist[id_,OptionsPattern[]] := ZhihuLinkGet[
+	"Members", "FollowingFavlists", id,
+	"CustomSavePath" -> "follow",
+	"CustomFilename" -> StringTemplate["`id`.favlists.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
+	"Save"->OptionValue[Save]
+];
+
+End[];
 
 EndPackage[]
-
-
