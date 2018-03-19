@@ -38,11 +38,11 @@ ZhihuLinkInit[] :=Block[
 	$ZhihuAuth="Bearer "<>StringTake[First@zc0,6;;-1];
 ];
 
-If[FindFile["zhihu.cookies"] === $Failed,
-	$ZhihuCookies = "";
+If[FindFile["zhihu.cookie"] === $Failed,
+	$ZhihuCookie = "";
 	"未检测到 zhihu.cookie 文件\n
 	请使用 ZhihuCookiesReset[] 设置你的cookies.",
-	$ZhihuCookies = Import@FindFile["zhihu.cookie"]
+	$ZhihuCookie = Import@FindFile["zhihu.cookie"]
 ];
 ZhihuCookiesReset[]:=CreateDialog[{
 	TextCell["粘贴你的Cookies(不需要是字符型)"],
