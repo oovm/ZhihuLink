@@ -185,8 +185,9 @@ $APIURL = <|
 ExportJSON[cat_, item_, name_String, content_,
 	OptionsPattern[{"CustomSavePath" -> None}]] :=Module[
 	{path},
-	If[(path = OptionValue["CustomSavePath"]) == None,
-		path = FileNameJoin[{$ZhihuLinkDirectory, cat, item}]
+	If[(path = OptionValue["CustomSavePath"]) === None,
+		path = FileNameJoin[{$ZhihuLinkDirectory, cat, item}],
+		path = FileNameJoin[{$ZhihuLinkDir, path}]
 	];
 	If[! DirectoryQ[path], CreateDirectory[path]];
 	Export[FileNameJoin[{path, name <> ".json"}], content]
@@ -228,7 +229,7 @@ ZhihuLinkGetRaw[url_String, OptionsPattern[]] :=
 		URLExecute[
 			HTTPRequest[url,<|
 				"Headers" -> {"authorization" -> $ZhihuLinkAuth}, 
-				"Cookies" -> $ZhihuLinkCookies,
+				"Cookies" -> $ZhihuLinkCookies
 			|>], Authentication -> None]
 	];
 
@@ -276,9 +277,9 @@ ZhihuLinkUserAnswer[id_,OptionsPattern[]] := ZhihuLinkGet[
 		Switch[OptionValue[Extension],
 			None,Nothing,
 			Min,"include"->"data[*].content,voteup_count",
-			All,"include"->"data[*].is_normal,suggest_edit,comment_count,collapsed_counts,reviewing_comments_count,can_comment,
+			All,"include"->"data[*].is_normal,suggest_edit,comment_count,can_comment,
 				content,voteup_count,reshipment_settings,comment_permission,mark_infos,created_time,updated_time,
-				relationship.voting,is_author,is_thanked,is_nothelp,upvoted_followees",
+				relationship,voting,is_author,is_thanked,is_nothelp,upvoted_followees",
 			_,OptionValue[Extension]
 		],
 		"sort_by"->OptionValue[SortBy]
@@ -295,7 +296,9 @@ ZhihuLinkUserArticle[id_,OptionsPattern[]] := ZhihuLinkGet[
 		Switch[OptionValue[Extension],
 			None,Nothing,
 			Min,"include"->"data[*].content,voteup_count",
-			All,"include"->"data[*].is_normal", (*Todo: needs filter*)
+			All,"include"->"data[*].is_normal,suggest_edit,comment_count,can_comment,
+				content,voteup_count,comment_permission,created,updated,
+				voting,upvoted_followees", 
 			_,OptionValue[Extension]
 		],
 		"sort_by"->OptionValue[SortBy]
