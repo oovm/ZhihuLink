@@ -6,12 +6,13 @@
 
 (* ::Section:: *)
 (*Begin Package*)
-
-
 BeginPackage["ZhihuLinkCookies`"];
 
-Needs["DatabaseLink`"];
+OpenCookieDialog::usage="";
+SaveCookies::usage="";
 
+Begin["`Cookies`"];
+Needs["DatabaseLink`"];
 (* ::Section:: *)
 (*Verify Cookie Status*)
 
@@ -304,16 +305,18 @@ OpenCookieDialog[]:=Block[
 SaveCookies::usage="Save cookies everywhere!";
 
 
-SaveCookies[]:=Block[{cookies=OpenCookieDialog[]},If[cookies===$Canceled,$Failed,
-	ExportCookies[cookies];
-	$ZhihuLinkCookies=cookies;
-	$ZhihuLinkAuth="Bearer "<>Select[cookie,#["Name"]=="z_c0"&][[1]]["Content"];
-	cookies]
+SaveCookies[]:=Block[
+	{cookies=OpenCookieDialog[]},
+	If[cookies===$Canceled,$Failed,
+		ExportCookies[cookies];
+		$ZhihuLinkCookies=cookies;
+		$ZhihuLinkAuth="Bearer "<>Select[cookie,#["Name"]=="z_c0"&][[1]]["Content"];
+		cookies]
 ];
 
 
 (* ::Section:: *)
 (*End Package*)
 
-
+End[];
 EndPackage[];
