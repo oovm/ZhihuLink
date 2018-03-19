@@ -27,33 +27,27 @@ $APIURL = <|
 		"Domain" -> "www.zhihu.com",
 
 		"Profile" -> <|(*用户信息*)
-			"Path" -> StringTemplate["api/v4/members/`id`"],
-			"RequireAuth" -> False
+			"Path" -> StringTemplate["api/v4/members/`id`"]
 		|>,
 
 		"Topic" -> <|(*话题信息*)
-			"Path" -> StringTemplate["api/v4/topics/`id`"],
-			"RequireAuth" -> False
+			"Path" -> StringTemplate["api/v4/topics/`id`"]
 		|>,
 
 		"Question" -> <|(*问题信息*)
-			"Path" -> StringTemplate["api/v4/questions/`id`"],
-			"RequireAuth" -> False
+			"Path" -> StringTemplate["api/v4/questions/`id`"]
 		|>,
 
 		"Answer" -> <|(*回答信息*)
-			"Path" -> StringTemplate["api/v4/answers/`id`"],
-			"RequireAuth" -> False
+			"Path" -> StringTemplate["api/v4/answers/`id`"]
 		|>,
 
 		"Messages" -> <|(*私信*)
-			"Path" -> StringTemplate["api/v4/messages"],
-			"RequireAuth" -> True
+			"Path" -> StringTemplate["api/v4/messages"]
 		|>,
 
 		"Notifications" -> <|(*通知*)
-			"Path" -> StringTemplate["api/v4/default-notifications"],
-			"RequireAuth" -> True
+			"Path" -> StringTemplate["api/v4/default-notifications"]
 		|>
 	|>,
 	"Members" -> <|
@@ -61,67 +55,55 @@ $APIURL = <|
 		"Domain" -> "www.zhihu.com",
 
 		"Followees" -> <|(*关注的人*)
-			"Path" -> StringTemplate["api/v4/members/`id`/followees"],
-			"RequireAuth" -> False
+			"Path" -> StringTemplate["api/v4/members/`id`/followees"]
 		|>,
 
 		"Followers" -> <|(*关注者*)
-			"Path" -> StringTemplate["api/v4/members/`id`/followers"],
-			"RequireAuth" -> False
+			"Path" -> StringTemplate["api/v4/members/`id`/followers"]
 		|>,
 
 		"FollowingQuestions" -> <|(*关注的问题*)
-			"Path" -> StringTemplate["api/v4/members/`id`/following-questions"],
-			"RequireAuth" -> False
+			"Path" -> StringTemplate["api/v4/members/`id`/following-questions"]
 		|>,
 
 		"FollowingTopics" -> <|(*关注的话题*)
-			"Path" -> StringTemplate["api/v4/members/`id`/following-topic-contributions"],
-			"RequireAuth" -> False
+			"Path" -> StringTemplate["api/v4/members/`id`/following-topic-contributions"]
 		|>,
 
 		"FollowingColumns" -> <|(*关注的专栏*)
-			"Path" -> StringTemplate["api/v4/members/`id`/following-columns"],
-			"RequireAuth" -> False
+			"Path" -> StringTemplate["api/v4/members/`id`/following-columns"]
 		|>,
 
 		"FollowingFavlists" -> <|(*关注的收藏夹*)
-			"Path" -> StringTemplate["api/v4/members/`id`/following-favlists"],
-			"RequireAuth" -> False
+			"Path" -> StringTemplate["api/v4/members/`id`/following-favlists"]
 		|>,
 
 		"Questions" -> <|(*提问*)
-			"Path" -> StringTemplate["api/v4/members/`id`/questions"],
-			"RequireAuth" -> False
+			"Path" -> StringTemplate["api/v4/members/`id`/questions"]
 		|>,
 
 		"Answers" -> <|(*回答*)
-			"Path" -> StringTemplate["api/v4/members/`id`/answers"],
-			"RequireAuth" -> False
+			"Path" -> StringTemplate["api/v4/members/`id`/answers"]
 		|>,
 
 		"Pins" -> <|(*想法*)
-			"Path" -> StringTemplate["api/v4/members/`id`/pins"],
-			"RequireAuth" -> False
+			"Path" -> StringTemplate["api/v4/members/`id`/pins"]
 		|>,
 
 		"Articles" -> <|(*文章*)
-			"Path" -> StringTemplate["api/v4/members/`id`/articles"],
-			"RequireAuth" -> False
+			"Path" -> StringTemplate["api/v4/members/`id`/articles"]
 		|>,
 
 		"Columns" -> <|(*专栏*)
-			"Path" -> StringTemplate["api/v4/members/`id`/column-contributions"],
-			"RequireAuth" -> False
+			"Path" -> StringTemplate["api/v4/members/`id`/column-contributions"]
 		|>,
 
 		"Favlists" -> <|(*收藏*)
-			"Path" -> StringTemplate["api/v4/members/`id`/favlists"],
-			"RequireAuth" -> False|>,
+			"Path" -> StringTemplate["api/v4/members/`id`/favlists"]
+		|>,
 
 		"Activities" -> <|(*动态*)
-			"Path" -> StringTemplate["api/v4/members/`id`/activities"],
-			"RequireAuth" -> True
+			"Path" -> StringTemplate["api/v4/members/`id`/activities"]
 		|>
 	|>,
 	"Questions" -> <|
@@ -129,23 +111,19 @@ $APIURL = <|
 		"Domain" -> "www.zhihu.com",
 
 		"Followers" -> <|(*关注者*)
-			"Path" -> StringTemplate["api/v4/questions/`id`/concerned_followers"],
-			"RequireAuth" -> False
+			"Path" -> StringTemplate["api/v4/questions/`id`/concerned_followers"]
 		|>,
 
 		"Comments" -> <|(*评论*)
-			"Path" -> StringTemplate["api/v4/questions/`id`/comments"],
-			"RequireAuth" -> False
+			"Path" -> StringTemplate["api/v4/questions/`id`/comments"]
 		|>,
 
 		"Invitees" -> <|(*被邀请的人*)
-			"Path" -> StringTemplate["api/v4/questions/`id`/invitees"],
-			"RequireAuth" -> False
+			"Path" -> StringTemplate["api/v4/questions/`id`/invitees"]
 		|>,
 
 		"InvitationCandidates" -> <|(*可能被邀请的人*)
-			"Path" ->StringTemplate["api/v4/questions/`id`/invitation-candidates"],
-			"RequireAuth" -> False
+			"Path" ->StringTemplate["api/v4/questions/`id`/invitation-candidates"]
 		|>
 	|>,
 	"Answers" -> <|
@@ -153,13 +131,11 @@ $APIURL = <|
 		"Domain" -> "www.zhihu.com",
 
 		"Upvoters" -> <|(*点赞者*)
-			"Path" ->StringTemplate["api/v4/answers/`id`/concerned_upvoters"],
-			"RequireAuth" -> False
+			"Path" ->StringTemplate["api/v4/answers/`id`/concerned_upvoters"]
 		|>,
 
 		"Comments" -> <|(*评论*)
-			"Path" -> StringTemplate["api/v4/answers/`id`/comments"],
-			"RequireAuth" -> False
+			"Path" -> StringTemplate["api/v4/answers/`id`/comments"]
 		|>
 	|>,
 	"Pins" -> <|
@@ -167,8 +143,7 @@ $APIURL = <|
 		"Domain" -> "www.zhihu.com",
 
 		"Comments" -> <|(*评论*)
-			"Path" -> StringTemplate["api/v4/pins/`id`/comments"],
-			"RequireAuth" -> False
+			"Path" -> StringTemplate["api/v4/pins/`id`/comments"]
 		|>
 	|>,
 	"Topics" -> <|
@@ -176,8 +151,7 @@ $APIURL = <|
 		"Domain" -> "www.zhihu.com",
 
 		"Followers" -> <|(*关注者*)
-			"Path" -> StringTemplate["api/v4/topics/`id`/followers"],
-			"RequireAuth" -> False
+			"Path" -> StringTemplate["api/v4/topics/`id`/followers"]
 		|>
 	|>,
 	"Articles" -> <|
@@ -185,14 +159,12 @@ $APIURL = <|
 		"Domain" -> "zhuanlan.zhihu.com",
 
 		"Upvoters" -> <|(*点赞者*)
-			"Path" -> StringTemplate["api/posts/`id`/likers"],
-			"RequireAuth" -> False
+			"Path" -> StringTemplate["api/posts/`id`/likers"]
 		|>,
 
 
 		"Comments" -> <|(*文章评论*)
-			"Path" -> StringTemplate["api/posts/`id`/comments"],
-			"RequireAuth" -> False
+			"Path" -> StringTemplate["api/posts/`id`/comments"]
 		|>
 	|>,
 	"Columns" -> <|
@@ -200,13 +172,11 @@ $APIURL = <|
 		"Domain" -> "zhuanlan.zhihu.com",
 
 		"Followers" -> <|(*关注者*)
-			"Path" -> StringTemplate["api/columns/`id`/followers"],
-			"RequireAuth" -> False
+			"Path" -> StringTemplate["api/columns/`id`/followers"]
 		|>,
 
 		"Posts" -> <|(*文章*)
-			"Path" -> StringTemplate["api/columns/`id`/posts"],
-			"RequireAuth" -> False
+			"Path" -> StringTemplate["api/columns/`id`/posts"]
 		|>
 	|>
 |>;
@@ -234,8 +204,7 @@ FixURL[url_String, _, _] := url;
 Options[ZhihuLinkGetRaw] = {
 	"offset" -> 0,
 	"limit" -> 20,
-	"Extension" -> Nothing,
-	"RequireAuth" -> False
+	"Extension" -> Nothing
 };
 ZhihuLinkGetRaw[cat_String, item_String, id_String,OptionsPattern[]] :=
 	GeneralUtilities`ToAssociations[
@@ -243,10 +212,8 @@ ZhihuLinkGetRaw[cat_String, item_String, id_String,OptionsPattern[]] :=
 			HTTPRequest[<|
 				"Scheme" -> $APIURL[cat]["Scheme"],
 				"Domain" -> $APIURL[cat]["Domain"],
-				"Headers" -> {
-					"Cookie" -> $ZhihuCookie,
-					"authorization" ->If[$APIURL[cat][item]["RequireAuth"], $ZhihuAuth, Nothing]
-				},
+				"Headers" -> {"authorization" -> $ZhihuLinkAuth}, 
+				"Cookies" -> $ZhihuLinkCookies,
 				"Path" -> {Evaluate[$APIURL[cat][item]["Path"][<|"id" -> id|>]]},
 				"Query" -> {
 					"limit" -> OptionValue@"limit",
@@ -260,10 +227,8 @@ ZhihuLinkGetRaw[url_String, OptionsPattern[]] :=
 	GeneralUtilities`ToAssociations[
 		URLExecute[
 			HTTPRequest[url,<|
-				"Headers" -> {
-					"Cookie" -> $ZhihuCookie,
-					"authorization" -> If[OptionValue["RequireAuth"], $ZhihuAuth, Nothing]
-				}
+				"Headers" -> {"authorization" -> $ZhihuLinkAuth}, 
+				"Cookies" -> $ZhihuLinkCookies,
 			|>], Authentication -> None]
 	];
 
