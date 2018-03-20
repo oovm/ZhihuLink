@@ -1,6 +1,16 @@
 Notebook[{
 
 Cell[CellGroupData[{
+Cell["Build", \
+"Section",ExpressionUUID->"947d2d46-5d9a-4c3d-a6fd-c98909e1bc52"],
+
+Cell[CellGroupData[{
+
+Cell["Now time", \
+"Subsection",ExpressionUUID->"5ad89b23-6476-4c68-9bf9-5ac02676a3dc"],
+
+Cell[CellGroupData[{
+
 Cell[BoxData[{
  RowBox[{"time", "=", "Now"}], "\[IndentingNewLine]", 
  RowBox[{
@@ -12,11 +22,10 @@ Cell[BoxData[{
  CellChangeTimes->{{3.729771288439731*^9, 3.729771293051919*^9}, {
   3.729771365116741*^9, 3.729771365669153*^9}, {3.73011016299809*^9, 
   3.7301101653627796`*^9}},
- CellLabel->
-  "In[213]:=",ExpressionUUID->"7744e0f6-372a-4494-bae9-85454046f7d9"],
+ CellLabel->"In[4]:=",ExpressionUUID->"81a962aa-ee7a-4a96-9ba3-59e0b862bc8c"],
 
 Cell[BoxData[
- TemplateBox[{RowBox[{"\"Tue 20 Mar 2018 00:27:13\"", 
+ TemplateBox[{RowBox[{"\"Tue 20 Mar 2018 13:33:33\"", 
      StyleBox[
       RowBox[{"\"GMT+\"", "\[InvisibleSpace]", 
         StyleBox["8.`", NumberMarks -> False, StripOnInput -> False]}], 
@@ -24,13 +33,24 @@ Cell[BoxData[
      RowBox[{
        RowBox[{"{", 
          RowBox[{
-          "2018", ",", "3", ",", "20", ",", "0", ",", "27", ",", 
-           "13.625639`8.886931832185905"}], "}"}], ",", "\"Instant\"", ",", 
+          "2018", ",", "3", ",", "20", ",", "13", ",", "33", ",", 
+           "33.7019913`9.28023046130033"}], "}"}], ",", "\"Instant\"", ",", 
        "\"Gregorian\"", ",", "8.`"}], "]"}]},
   "DateObject",
   Editable->False]], "Output",
- CellLabel->"Out[213]=",ExpressionUUID->"9fb2b6ce-d51c-41b0-82ba-e719bfc2b7ff"]
+ CellLabel->"Out[4]=",ExpressionUUID->"30fa8a99-29d4-4010-877b-14f737514dde"]
+}, Open  ]]
 }, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["compress_function", \
+"Subsection",ExpressionUUID->"dfa3a148-6713-4db7-be1f-25589706c381"],
+
+Cell[CellGroupData[{
+
+Cell["compress_old", \
+"Subsubsection",ExpressionUUID->"a27cc238-5494-4ae1-9b08-12e666f4aa0a"],
 
 Cell["\<\
 rawPath = FileNameJoin@{path, \"Packages\", \"__Raw\"};
@@ -52,126 +72,84 @@ _?dQ];
    ] // Quiet
 build /@ all; // TT\
 \>", "Program",
- CellLabel->"In[66]:=",ExpressionUUID->"cac4219d-5d77-47bc-800c-de5cde09f989"],
+ CellLabel->"In[66]:=",ExpressionUUID->"cac4219d-5d77-47bc-800c-de5cde09f989"]
+}, Closed]],
 
 Cell[CellGroupData[{
 
+Cell["compress_new", \
+"Subsubsection",ExpressionUUID->"f5cba0b4-b803-4b8e-810a-99b9e69ac2d5"],
+
 Cell[BoxData[{
  RowBox[{
-  RowBox[{"rawPath", "=", 
+  RowBox[{"rawPath", " ", "=", " ", 
    RowBox[{"FileNameJoin", "@", 
     RowBox[{"{", 
-     RowBox[{"path", ",", "\"\<Packages\>\"", ",", "\"\<__Raw\>\""}], 
+     RowBox[{
+     "path", ",", " ", "\"\<Packages\>\"", ",", " ", "\"\<__Raw\>\""}], 
      "}"}]}]}], ";"}], "\n", 
  RowBox[{
-  RowBox[{"all", "=", 
+  RowBox[{"all", " ", "=", " ", 
    RowBox[{"Select", "[", 
     RowBox[{
      RowBox[{"FileNames", "[", 
-      RowBox[{"\"\<*\>\"", ",", "rawPath"}], "]"}], ",", 
+      RowBox[{"\"\<*\>\"", ",", " ", "rawPath"}], "]"}], ",", " ", 
      RowBox[{
       RowBox[{
        RowBox[{"StringPart", "[", 
-        RowBox[{"#", ",", 
-         RowBox[{"-", "1"}]}], "]"}], "\[Equal]", "\"\<l\>\""}], "&"}]}], 
-    "]"}]}], ";"}], "\n", 
+        RowBox[{"#", ",", " ", 
+         RowBox[{"-", "1"}]}], "]"}], " ", "==", " ", "\"\<l\>\""}], " ", 
+      "&"}]}], "]"}]}], ";"}], "\n", 
  RowBox[{
-  RowBox[{"drule", "=", 
+  RowBox[{"drule", " ", "=", " ", 
    RowBox[{"{", 
     RowBox[{
-    "\"\<\\n\>\"", ",", "\"\<\\r\>\"", ",", "\"\<\\t\>\"", ",", 
-     "\"\<EndPackage[]\>\"", ",", 
+    "\"\<\\n\>\"", ",", " ", "\"\<\\r\>\"", ",", " ", "\"\<\\t\>\"", ",", 
+     " ", "\"\<EndPackage[]\>\"", ",", " ", 
      RowBox[{
      "RegularExpression", "[", "\"\<BeginPackage\\\\[((.*?))\\\\];\>\"", 
-      "]"}], ",", 
+      "]"}], ",", " ", 
      RowBox[{
      "RegularExpression", "[", "\"\<\\\\(\\\\*[\\\\w\\\\W]*?\\\\*\\\\)\>\"", 
       "]"}]}], "}"}]}], ";"}], "\n", 
  RowBox[{
   RowBox[{
-   RowBox[{"build", "[", "file_", "]"}], ":=", 
+   RowBox[{"build", "[", "file_", "]"}], " ", ":=", " ", 
    RowBox[{
     RowBox[{"Block", "[", 
      RowBox[{
       RowBox[{"{", 
-       RowBox[{"mpkg", ",", "name"}], "}"}], ",", 
+       RowBox[{"mpkg", ",", " ", "name"}], "}"}], ",", " ", 
       RowBox[{
-       RowBox[{"mpkg", "=", 
+       RowBox[{"mpkg", " ", "=", " ", 
         RowBox[{"StringDelete", "[", 
          RowBox[{
           RowBox[{"Import", "[", 
-           RowBox[{"file", ",", "\"\<Text\>\""}], "]"}], ",", "drule"}], 
-         "]"}]}], ";", "\[IndentingNewLine]", 
-       RowBox[{"name", "=", 
+           RowBox[{"file", ",", " ", "\"\<Text\>\""}], "]"}], ",", " ", 
+          "drule"}], "]"}]}], ";", "\n", "    ", 
+       RowBox[{"name", " ", "=", " ", 
         RowBox[{"FileNameJoin", "@", 
          RowBox[{"{", 
           RowBox[{
-           RowBox[{"ParentDirectory", "@", "rawPath"}], ",", 
+           RowBox[{"ParentDirectory", "@", "rawPath"}], ",", " ", 
            RowBox[{
-            RowBox[{"FileBaseName", "[", "file", "]"}], "<>", 
-            "\"\<.m\>\""}]}], "}"}]}]}], ";", "\[IndentingNewLine]", 
+            RowBox[{"FileBaseName", "[", "file", "]"}], " ", "<>", " ", 
+            "\"\<.m\>\""}]}], "}"}]}]}], ";", "\n", "    ", 
        RowBox[{"Export", "[", 
-        RowBox[{"name", ",", "mpkg", ",", "\"\<List\>\""}], "]"}], ";", 
-       "\[IndentingNewLine]", 
+        RowBox[{"name", ",", " ", "mpkg", ",", " ", "\"\<List\>\""}], "]"}], 
+       ";", "\n", "    ", 
        RowBox[{"Print", "[", 
-        RowBox[{"\"\<Building: \>\"", "<>", 
-         RowBox[{"FileBaseName", "[", "file", "]"}]}], "]"}]}]}], "]"}], "//",
-     "Quiet"}]}], ";"}], "\n", 
- RowBox[{
-  RowBox[{
-   RowBox[{"build", "/@", "all"}], "//", "TT"}], ";"}]}], "Input",
- CellLabel->
-  "In[215]:=",ExpressionUUID->"4dc14dd7-e4de-435d-bd5b-2349b7ef8282"],
+        RowBox[{"\"\<Building: \>\"", " ", "<>", " ", 
+         RowBox[{"FileBaseName", "[", "file", "]"}]}], "]"}]}]}], "]"}], " ", 
+    "//", " ", "Quiet"}]}], ";"}]}], "Input",
+ CellLabel->"In[6]:=",ExpressionUUID->"4dc14dd7-e4de-435d-bd5b-2349b7ef8282"]
+}, Closed]]
+}, Closed]],
 
 Cell[CellGroupData[{
 
-Cell[BoxData["\<\"Building: Html2Markdown\"\>"], "Print",
- CellLabel->
-  "\:6b63\:5728\:8ba1\:7b97In[215]:=",ExpressionUUID->"e1f84fb3-6e80-49a9-\
-9588-af780ca46e32"],
-
-Cell[BoxData["\<\"Building: ZhihuLinkBackup\"\>"], "Print",
- CellLabel->
-  "\:6b63\:5728\:8ba1\:7b97In[215]:=",ExpressionUUID->"d74a43fa-877d-4a41-\
-8e0f-c591c471f693"],
-
-Cell[BoxData["\<\"Building: ZhihuLinkCookies\"\>"], "Print",
- CellLabel->
-  "\:6b63\:5728\:8ba1\:7b97In[215]:=",ExpressionUUID->"d429dc74-d5f0-44cd-\
-8a74-09d19a2a3820"],
-
-Cell[BoxData["\<\"Building: ZhihuLinkGet\"\>"], "Print",
- CellLabel->
-  "\:6b63\:5728\:8ba1\:7b97In[215]:=",ExpressionUUID->"e4675e38-509e-4ebf-\
-afb8-711847ac2139"],
-
-Cell[BoxData["\<\"Building: ZhihuLinkInit\"\>"], "Print",
- CellLabel->
-  "\:6b63\:5728\:8ba1\:7b97In[215]:=",ExpressionUUID->"e266b4ea-5bc0-4e50-\
-8fd6-d4db0bf5352d"],
-
-Cell[BoxData["\<\"Building: ZhihuLinkObject\"\>"], "Print",
- CellLabel->
-  "\:6b63\:5728\:8ba1\:7b97In[215]:=",ExpressionUUID->"d900aeb6-5759-4edd-\
-a83d-82b7cd699d55"],
-
-Cell[BoxData[
- RowBox[{
-  TagBox["\<\"CPU Time: \"\>",
-   "EchoLabel"], " ", 
-  "0.03125`"}]], \
-"Echo",ExpressionUUID->"eed0f55e-600c-49d7-a70d-f93a4214846a"],
-
-Cell[BoxData[
- RowBox[{
-  TagBox["\<\"All Time: \"\>",
-   "EchoLabel"], " ", 
-  "0.11851458583996234`"}]], \
-"Echo",ExpressionUUID->"054fd138-7908-466a-982c-a2fb4c1f1f00"]
-}, Open  ]]
-}, Open  ]],
-
-Cell[CellGroupData[{
+Cell["pack_function", \
+"Subsection",ExpressionUUID->"bd41a9bf-1d30-409d-ac3b-15513bc0adf5"],
 
 Cell[BoxData[{
  RowBox[{
@@ -211,40 +189,65 @@ Cell[BoxData[{
    RowBox[{"info", ",", "infoN", ",", "\"\<String\>\""}], "]"}], 
   ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"paclet", "=", 
+  RowBox[{"(*", 
    RowBox[{
-    RowBox[{"PackPaclet", "@", "path"}], "//", "TT"}]}], 
-  ";"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{"SystemOpen", "[", 
-   RowBox[{"DirectoryName", "[", 
-    RowBox[{"AbsoluteFileName", "[", "paclet", "]"}], "]"}], "]"}], 
-  ";"}]}], "Input",
- CellChangeTimes->{{3.7297728895119824`*^9, 3.7297729650171385`*^9}, {
-   3.7297730025081434`*^9, 3.72977303691256*^9}, {3.729773139706052*^9, 
-   3.729773186893263*^9}, {3.729773561682421*^9, 3.72977356270006*^9}, {
-   3.7297737188628263`*^9, 3.7297737946528473`*^9}, {3.729773825999505*^9, 
-   3.7297738541097183`*^9}, 3.729847528947226*^9, 3.7301003890139604`*^9, {
-   3.7301102831269836`*^9, 3.730110289989846*^9}},
- CellLabel->
-  "In[220]:=",ExpressionUUID->"0eca65f5-421d-4952-8f93-6a9d2a140173"],
+    RowBox[{"SystemOpen", "[", 
+     RowBox[{"DirectoryName", "[", 
+      RowBox[{"AbsoluteFileName", "[", "paclet", "]"}], "]"}], "]"}], ";"}], 
+   "*)"}]}]}], "Input",
+ CellLabel->"In[10]:=",ExpressionUUID->"0eca65f5-421d-4952-8f93-6a9d2a140173"]
+}, Closed]],
 
 Cell[CellGroupData[{
 
-Cell[BoxData[
- RowBox[{
-  TagBox["\<\"CPU Time: \"\>",
-   "EchoLabel"], " ", 
-  "0.046875`"}]], \
-"Echo",ExpressionUUID->"6c924948-fca9-4c40-814b-182c4ad6da08"],
+Cell["# Run Build", \
+"Subsection",ExpressionUUID->"0c542b7f-68a7-4338-be2a-c513d5ab101d"],
 
-Cell[BoxData[
+Cell[CellGroupData[{
+
+Cell[BoxData[{
  RowBox[{
-  TagBox["\<\"All Time: \"\>",
-   "EchoLabel"], " ", 
-  "0.27713259214092206`"}]], \
-"Echo",ExpressionUUID->"a848e69f-5583-40cb-967c-429f6eb80daf"]
-}, Open  ]]
+  RowBox[{"build", " ", "/@", " ", "all"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"paclet", "=", 
+  RowBox[{"PackPaclet", "@", "path"}]}]}], "Input",
+ CellLabel->"In[14]:=",ExpressionUUID->"d067c60a-39b3-425a-9e72-6873869cb1d8"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"Building: Html2Markdown\"\>"], "Print",
+ CellLabel->
+  "\:6b63\:5728\:8ba1\:7b97In[14]:=",ExpressionUUID->"7a16c7fb-5439-467d-911c-\
+871dec2fd48d"],
+
+Cell[BoxData["\<\"Building: ZhihuLinkBackup\"\>"], "Print",
+ CellLabel->
+  "\:6b63\:5728\:8ba1\:7b97In[14]:=",ExpressionUUID->"63ce28ff-3145-4e94-93a2-\
+eb9d1a29c4b2"],
+
+Cell[BoxData["\<\"Building: ZhihuLinkCookies\"\>"], "Print",
+ CellLabel->
+  "\:6b63\:5728\:8ba1\:7b97In[14]:=",ExpressionUUID->"ab21dbca-cf2d-4786-b833-\
+eccfc3db8abb"],
+
+Cell[BoxData["\<\"Building: ZhihuLinkGet\"\>"], "Print",
+ CellLabel->
+  "\:6b63\:5728\:8ba1\:7b97In[14]:=",ExpressionUUID->"7fdd0227-33ee-4df9-ba1b-\
+8bfbc29334b1"],
+
+Cell[BoxData["\<\"Building: ZhihuLinkInit\"\>"], "Print",
+ CellLabel->
+  "\:6b63\:5728\:8ba1\:7b97In[14]:=",ExpressionUUID->"5ddb2189-907c-42f4-9e95-\
+bbed2dee2c4f"],
+
+Cell[BoxData["\<\"Building: ZhihuLinkObject\"\>"], "Print",
+ CellLabel->
+  "\:6b63\:5728\:8ba1\:7b97In[14]:=",ExpressionUUID->"370aeaa3-8414-44b9-a608-\
+d153520dad1e"]
+}, Open  ]],
+
+Cell[BoxData["\<\"C:\\\\Users\\\\28059\\\\AppData\\\\Roaming\\\\Mathematica\\\
+\\Applications\\\\ZhihuLink-0.3.9.paclet\"\>"], "Output",
+ CellLabel->"Out[15]=",ExpressionUUID->"042f0b7b-f898-4265-848c-87843973ad65"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -256,16 +259,17 @@ Cell[BoxData[
     RowBox[{"Now", "-", "time"}], ",", "\"\<Time used: \>\""}], "]"}], 
   ";"}]], "Input",
  CellChangeTimes->{{3.730101440514496*^9, 3.730101473242628*^9}},
- CellLabel->
-  "In[226]:=",ExpressionUUID->"7a454ee7-1c78-4e4d-b243-838f0c4e73f8"],
+ CellLabel->"In[16]:=",ExpressionUUID->"7a454ee7-1c78-4e4d-b243-838f0c4e73f8"],
 
 Cell[BoxData[
  RowBox[{
   TagBox["\<\"Time used: \"\>",
    "EchoLabel"], " ", 
-  TemplateBox[{"0.6447366`","\"s\"","seconds","\"Seconds\""},
+  TemplateBox[{"0.5635244`","\"s\"","seconds","\"Seconds\""},
    "Quantity"]}]], \
-"Echo",ExpressionUUID->"f501325d-565d-4f67-bb35-15f3f482b71d"]
+"Echo",ExpressionUUID->"a91bd69f-9e24-4ef4-b62d-66918a09482d"]
+}, Open  ]]
+}, Open  ]]
 }, Open  ]]
 },
 WindowSize->{775, 872},
@@ -274,6 +278,7 @@ PrivateNotebookOptions->{"FileOutlineCache"->False},
 TrackCellChangeTimes->False,
 FrontEndVersion->"11.3 for Microsoft Windows (64-bit) (2018\:5e743\:67086\
 \:65e5)",
-StyleDefinitions->"Default.nb"
+StyleDefinitions->FrontEnd`FileName[{"Wolfram"}, "ProgrammingLabDefault.nb", 
+  CharacterEncoding -> "UTF-8"]
 ]
 

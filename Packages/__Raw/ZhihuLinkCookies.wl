@@ -11,7 +11,7 @@ BeginPackage["ZhihuLinkCookies`"];
 OpenCookieDialog::usage="";
 SaveCookies::usage="";
 
-Begin["`Cookies`"];
+Begin["`Private`"];
 Needs["DatabaseLink`"];
 (* ::Section:: *)
 (*Verify Cookie Status*)

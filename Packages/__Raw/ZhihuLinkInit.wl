@@ -20,17 +20,19 @@
 BeginPackage["ZhihuLinkInit`"];
 (* ::Section:: *)
 (*程序包正体*)
-
+$ZhihuLinkMarkdown::usage = "ZhihuLink 的缓存目录.";
+$ZhihuLinkDirectory::usage = "ZhihuLink 的缓存目录.";
+$ZhihuCookie::usage = "";
+$ZhihuAuth::usage = "";
+ZhihuLinkInit::usage = "";
 
 (* ::Subsection::Closed:: *)
 (*主设置*)
-$ZhihuLinkMarkdown::usage = "ZhihuLink 的缓存目录.";
-$ZhihuLinkDirectory::usage = "ZhihuLink 的缓存目录.";
-$ZhihuCookie::usage ="";
-$ZhihuAuth::usage ="";
-ZhihuLinkInit::usage ="";
-Begin["`Init`"];
-ZhihuLinkGetCheck[];
+Begin["`Private`"];
+$ZhihuLinkDirectory=FileNameJoin[{$UserBaseDirectory,"ApplicationData","ZhihuLink"}];
+$ZhihuLinkMarkdown=FileNameJoin[{$UserBaseDirectory,"ApplicationData","HTML2Markdown","Zhihu"}];
+
+
 ZhihuLinkInit[] :=Block[
 	{zc0},
 	$ZhihuCookie = Import[FindFile["zhihu.cookie"]];
@@ -38,6 +40,9 @@ ZhihuLinkInit[] :=Block[
 	$ZhihuAuth="Bearer "<>StringTake[First@zc0,6;;-1];
 ];
 
+
+(*
+ZhihuLinkGetCheck[];
 If[FindFile["zhihu.cookie"] === $Failed,
 	$ZhihuCookie = "";
 	"未检测到 zhihu.cookie 文件\n
@@ -52,7 +57,7 @@ ZhihuCookiesReset[]:=CreateDialog[{
 	WindowTitle->"需要Token"
 ];
 
-
+*)
 (* ::Subsection::Closed:: *)
 (*附加设置*)
 End[] ;

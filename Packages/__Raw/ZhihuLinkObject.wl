@@ -1,23 +1,34 @@
-(* Mathematica Package *)
-(* Created by Mathematica Plugin for IntelliJ IDEA *)
-
-(* :Title: ZhihuLinkObject *)
-(* :Context: ZhihuLinkObject` *)
-(* :Author: 28059 *)
-(* :Date: 2018-03-19 *)
-
-(* :Package Version: 0.1 *)
-(* :Mathematica Version: *)
-(* :Copyright: (c) 2018 28059 *)
-(* :Keywords: *)
-(* :Discussion: *)
-
+(* ::Package:: *)
+(* ::Title:: *)
+(*ZhihuLinkObject*)
+(* ::Subchapter:: *)
+(*程序包介绍*)
+(* ::Text:: *)
+(*Mathematica Package*)
+(*Created by Mathematica Plugin for IntelliJ IDEA*)
+(**)
+(* ::Text:: *)
+(*Creation Date: 2018-03-12*)
+(*Copyright: Mozilla Public License Version 2.0*)
+(* ::Program:: *)
+(*1.软件产品再发布时包含一份原始许可声明和版权声明。*)
+(*2.提供快速的专利授权。*)
+(*3.不得使用其原始商标。*)
+(*4.如果修改了源代码，包含一份代码修改说明。*)
+(* ::Section:: *)
+(*函数说明*)
 BeginPackage["ZhihuLinkObject`"];
 ZhihuLinkObject::usage="";
 ZhihuConnect::usage="";
-
-Begin["`Object`"];
+$ZhihuLinkIcon::usage="";
+(* ::Section:: *)
+(*程序包正体*)
 $ZhihuLinkIcon=Import[DirectoryName@FindFile["ZhihuLink`ZhihuLinkLoader`"]<>"ZhihuLinkLogo.png"];
+Begin["`Private`"];
+(* ::Subsection::Closed:: *)
+(*主体代码*)
+(* ::Subsubsection:: *)
+(*ZhihuLinkUserObject*)
 CookiesGetMe[cookie_,auth_]:=Block[
 	{req=HTTPRequest[
 		"https://api.zhihu.com/people/self",
@@ -42,9 +53,16 @@ ZhihuConnect[cookie_String]:=Block[
 	ZhihuLinkUserObject[<|
 		"cookies"->cookie,
 		"auth"->auth,
-		"user"->Text@Style[me["url_token"],Darker@Blue],
-		"img"->img
+		"user"->me["url_token"],
+		"img"->img,
+		"time"->Now
 	|>]
+];
+CookiesTimeCheck[t_]:=Piecewise[
+	{
+		{Text@Style["\[Checkmark] Success!",Darker@Green],QuantityMagnitude@t<3*86400},
+		{Text@Style["× Fail !!",Red],QuantityMagnitude@t>86400*25}
+	},Text@Style["¿ Need Refresh",Purple]
 ];
 Format[ZhihuLinkUserObject[___],OutputForm]:="ZhihuLinkUserObject[<>]";
 Format[ZhihuLinkUserObject[___],InputForm]:="ZhihuLinkUserObject[<>]";
@@ -53,9 +71,9 @@ ZhihuLinkUserObjectQ[_]=False;
 ZhihuLinkUserObject/:MakeBoxes[obj:ZhihuLinkUserObject[asc_?ZhihuLinkUserObjectQ],form:(StandardForm|TraditionalForm)]:=Module[
 	{above,below},
 	above={
-		{BoxForm`SummaryItem[{"KeyID: ",Hash@asc["cookies"]}],SpanFromLeft},
-		{BoxForm`SummaryItem[{"User: ",asc["user"]}],SpanFromLeft},
-		{BoxForm`SummaryItem[{"Validity: ",Text@Style["\[Checkmark] Success!",Darker@Green]}],SpanFromLeft}
+		{BoxForm`SummaryItem[{"KeyID: ",Style[Hash@asc["cookies"], DigitBlock -> 5, NumberSeparator -> "-"]}],SpanFromLeft},
+		{BoxForm`SummaryItem[{"User: ",Text@Style[asc["user"],Darker@Blue]}],SpanFromLeft},
+		{BoxForm`SummaryItem[{"Validity: ",CookiesTimeCheck[Now-asc["time"]]}],SpanFromLeft}
 	};
 	below={};
 	BoxForm`ArrangeSummaryBox[
@@ -69,6 +87,8 @@ ZhihuLinkUserObject/:MakeBoxes[obj:ZhihuLinkUserObject[asc_?ZhihuLinkUserObjectQ
 	]
 ];
 
+(* ::Subsubsection:: *)
+(*ObjectPost*)
 Answer2Data[post_]:=Block[
 	{title=post["question","title"],qa,link},
 	qa=<|"q"->post["question","id"],"a"->post["id"]|>;
@@ -102,13 +122,32 @@ ObjectPost[user_String,OptionsPattern[]]:=Block[
 	If[OptionValue[Times],Echo[Now-now,"Time Used: "]];
 	Return@data
 ];
-ZhihuLinkUserObject[ass_]["Post",ops_List]:=Block[
+ZhihuLinkUserObject[ass_]["Post"]:=With[
 	{
 		$ZhihuCookie=Lookup[ass,"cookie"],
 		$ZhihuAuth=Lookup[ass,"auth"]
 	},
-	ObjectPost@@ops
+	ObjectPost[Lookup[ass,"user"]];
 ];
-End[];
+ZhihuLinkUserObject[ass_]["Post",ops_List]:=With[
+	{
+		$ZhihuCookie=Lookup[ass,"cookie"],
+		$ZhihuAuth=Lookup[ass,"auth"]
+	},
+		ObjectPost@@ops
+];
+(* ::Subsubsection:: *)
+(*ObjectFollow*)
 
-EndPackage[];
+
+(* ::Subsubsection:: *)
+(*ObjectFavor*)
+
+(* ::Subsection::Closed:: *)
+(*附加设置*)
+End[] ;
+SetAttributes[
+	{},
+	{Protected,ReadProtected}
+];
+EndPackage[]
