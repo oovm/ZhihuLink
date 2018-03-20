@@ -32,7 +32,7 @@ Begin["`Private`"];
 $ZhihuLinkDirectory=FileNameJoin[{$UserBaseDirectory,"ApplicationData","ZhihuLink"}];
 $ZhihuLinkMarkdown=FileNameJoin[{$UserBaseDirectory,"ApplicationData","HTML2Markdown","Zhihu"}];
 
-
+ZhihuConnectCookie::usage="";
 ZhihuLinkInit[] :=Block[
 	{zc0},
 	$ZhihuCookie = Import[FindFile["zhihu.cookie"]];

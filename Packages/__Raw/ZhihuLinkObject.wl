@@ -19,7 +19,7 @@
 (*函数说明*)
 BeginPackage["ZhihuLinkObject`"];
 ZhihuLinkObject::usage="";
-ZhihuConnect::usage="";
+ZhihuConnectCookie::usage="";
 $ZhihuLinkIcon::usage="";
 (* ::Section:: *)
 (*程序包正体*)
@@ -39,7 +39,7 @@ CookiesGetMe[cookie_,auth_]:=Block[
 		|>]},
 	GeneralUtilities`ToAssociations@URLExecute[req,Authentication->None,Interactive->False]
 ]//Quiet;
-ZhihuConnect[cookie_String]:=Block[
+ZhihuConnectCookie[cookie_String]:=Block[
 	{zc0,auth,me,img},
 	zc0=Select[StringSplit[StringDelete[cookie," "],";"],StringTake[#,5]=="z_c0="&];
 	auth="Bearer "<>StringTake[First@zc0,6;;-1];
@@ -61,7 +61,7 @@ ZhihuConnect[cookie_String]:=Block[
 CookiesTimeCheck[t_]:=Piecewise[
 	{
 		{Text@Style["\[Checkmark] Success!",Darker@Green],QuantityMagnitude@t<3*86400},
-		{Text@Style["× Fail !!",Red],QuantityMagnitude@t>86400*25}
+		{Text@Style["\[Chi] Fail !!",Red],QuantityMagnitude@t>86400*25}
 	},Text@Style["¿ Need Refresh",Purple]
 ];
 Format[ZhihuLinkUserObject[___],OutputForm]:="ZhihuLinkUserObject[<>]";
