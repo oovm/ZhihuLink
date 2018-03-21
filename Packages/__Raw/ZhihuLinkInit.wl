@@ -29,8 +29,13 @@ ZhihuLinkInit::usage = "";
 (* ::Subsection::Closed:: *)
 (*主设置*)
 Begin["`Private`"];
+
+
 $ZhihuLinkDirectory=FileNameJoin[{$UserBaseDirectory,"ApplicationData","ZhihuLink"}];
 $ZhihuLinkMarkdown=FileNameJoin[{$UserBaseDirectory,"ApplicationData","HTML2Markdown","Zhihu"}];
+
+
+
 
 ZhihuConnectCookie::usage="";
 ZhihuLinkInit[] :=Block[
@@ -39,6 +44,7 @@ ZhihuLinkInit[] :=Block[
 	zc0=Select[StringSplit[StringDelete[$ZhihuCookie," "],";"],StringTake[#,5]=="z_c0="&];
 	$ZhihuAuth="Bearer "<>StringTake[First@zc0,6;;-1];
 ];
+
 
 
 (*
