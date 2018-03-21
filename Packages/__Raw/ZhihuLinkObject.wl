@@ -19,7 +19,7 @@
 (*函数说明*)
 BeginPackage["ZhihuLinkObject`"];
 ZhihuLinkObject::usage="";
-ZhihuConnectCookie::usage="";
+
 $ZhihuLinkIcon::usage="";
 (* ::Section:: *)
 (*程序包正体*)
@@ -39,25 +39,7 @@ CookiesGetMe[cookie_,auth_]:=Block[
 		|>]},
 	GeneralUtilities`ToAssociations@URLExecute[req,Authentication->None,Interactive->False]
 ]//Quiet;
-ZhihuConnectCookie[cookie_String]:=Block[
-	{zc0,auth,me,img},
-	zc0=Select[StringSplit[StringDelete[cookie," "],";"],StringTake[#,5]=="z_c0="&];
-	auth="Bearer "<>StringTake[First@zc0,6;;-1];
-	me=CookiesGetMe[cookie,auth];
-	Switch[me["error","code"],
-		100,Text@Style["验证失败, 请刷新此 cookie",Darker@Red]//Return,
-		40352,Text@Style["该账号已被限制, 请手动登陆解除限制",Darker@Red]//Return,
-		_,Text@Style["Login Successfully!",Darker@Green]//Print
-	];
-	img=ImageResize[URLExecute[StringTake[me["avatar_url"],1;;-6]<>"r.jpg","jpg"],52];
-	ZhihuLinkUserObject[<|
-		"cookies"->cookie,
-		"auth"->auth,
-		"user"->me["url_token"],
-		"img"->img,
-		"time"->Now
-	|>]
-];
+
 CookiesTimeCheck[t_]:=Piecewise[
 	{
 		{Text@Style["\[Checkmark] Success!",Darker@Green],QuantityMagnitude@t<3*86400},

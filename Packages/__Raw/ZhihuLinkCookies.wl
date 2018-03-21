@@ -18,6 +18,8 @@
 (* ::Section:: *)
 (*函数说明*)
 BeginPackage["ZhihuLinkCookies`"];
+$ZhihuKeys::usage="";
+ZhihuKeys::usage="";
 ZhihuKeyImport::usage="Import cookies from file.";
 ZhihuKeyExport::usage="Export a association (usually symbolize a series of cookies) into file after simple encryption.";
 ZhihuKeyObject::usage="";
@@ -94,6 +96,7 @@ ZhihuKeyVerify[cookie_]:=Check[Block[
 Options[ZhihuKeyExport]={Key->None};
 ZhihuKeyExport[ass_,OptionsPattern[]]:=Block[
 	{file=FileNameJoin[{$ZhihuLinkDirectory,"key.wxf"}]},
+	If[FileExistsQ@file,DeleteFile@file];
 	BinaryWrite[
 		file,
 		BinarySerialize[Encrypt[
@@ -157,13 +160,33 @@ ZhihuKeyAdd[OptionsPattern[]]:=Block[
 		$ZhihuKeys=ZhihuKeyImport[Message->False,Key->OptionValue[Key]];
 		If[$ZhihuKeys===$Failed,$ZhihuKeys={}]
 	];
-	DeleteDuplicatesBy[AppendTo[$ZhihuKeys,ass],#["ID"]&];
+	DeleteDuplicatesBy[Join[$ZhihuKeys,{ass}],#["ID"]&];
 	ZhihuKeyExport[$ZhihuKeys,Key->OptionValue[Key]];
 	Echo[
 		Text@Style[Hash@key,Darker@Blue,DigitBlock->5,NumberSeparator->"-"],
 		"Successfully Add:\n"
 	];
 ];
+
+
+
+(* ::Subsubsection:: *)
+(*ZhihuKeys*)
+Options[ZhihuKeys]={Key->None};
+ZhihuKeys[OptionsPattern[]]:=Block[
+	{ks},
+	$ZhihuKeys=ZhihuKeyImport[Message->False,Key->OptionValue[Key]];
+	If[$ZhihuKeys===$Failed,
+		Text@Style["你没有已储存的 Key!",Darker@Red]//Print;
+		Return[$Canceled]
+	];
+	ks=ReverseSort[$ZhihuKeys,#["Time"]&];
+	MapIndexed[#1/.ZhihuKeyObject[x_]->First@#2&,ks]//Dataset
+];
+
+
+
+
 (* ::Subsection::Closed:: *)
 (*附加设置*)
 End[];
