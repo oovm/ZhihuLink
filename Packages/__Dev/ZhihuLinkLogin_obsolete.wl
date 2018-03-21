@@ -210,17 +210,7 @@ GetCookies[]:=<|
 |>&@@@GetRawCookies[];
 
 
-(* ::Text:: *)
-(*A bit of all-in-one stuffs*)
 
-
-FirefoxSetCookie[directory_]:=Quiet@Block[
-	{temp},
-	If[SetFirefoxDirectory[directory]=!=$Failed&&Quiet[Check[EstablishCookieSQLConnection[];temp=GetCookies[],$Failed]]=!=$Failed&&VerifyCookieStatus[temp],
-		temp,
-		<||>
-	]
-];
 
 
 (* ::Section:: *)

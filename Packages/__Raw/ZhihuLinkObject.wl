@@ -145,7 +145,7 @@ ZhihuLinkUserObject[ass_]["Post",ops_List]:=With[
 
 (* ::Subsection::Closed:: *)
 (*附加设置*)
-End[] ;
+End[];
 SetAttributes[
 	{},
 	{Protected,ReadProtected}

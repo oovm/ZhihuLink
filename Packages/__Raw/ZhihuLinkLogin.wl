@@ -12,11 +12,21 @@
 (* :Keywords: *)
 (* :Discussion: *)
 
-BeginPackage["ZhihuLink`"]
+BeginPackage["ZhihuLink`"];
 (* Exported symbols added here with SymbolName::usage *)
+FirefoxSetCookie::usage="";
+Begin["`Private`"];
+(* ::Text:: *)
+(*A bit of all-in-one stuffs*)
 
-Begin["`Private`"]
 
-End[] (* `Private` *)
+FirefoxSetCookie[directory_]:=Quiet@Block[
+	{temp},
+	If[SetFirefoxDirectory[directory]=!=$Failed&&Quiet[Check[EstablishCookieSQLConnection[];temp=GetCookies[],$Failed]]=!=$Failed&&VerifyCookieStatus[temp],
+		temp,
+		<||>
+	]
+];
+End[];
 
 EndPackage[]

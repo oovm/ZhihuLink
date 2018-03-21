@@ -115,7 +115,7 @@ ImportCookies[]:=If[FileExistsQ@$ZhihuLinkCookieFile,
 
 (* ::Subsection::Closed:: *)
 (*附加设置*)
-End[] ;
+End[];
 SetAttributes[
 	{},
 	{Protected,ReadProtected}

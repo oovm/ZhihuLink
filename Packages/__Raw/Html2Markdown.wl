@@ -73,7 +73,7 @@ ZhihuH2MD[input_String,OptionsPattern[]]:=Block[
 ];
 (* ::Subsection::Closed:: *)
 (*附加设置*)
-End[] ;
+End[];
 SetAttributes[
 	{},
 	{Protected,ReadProtected}
