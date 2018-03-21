@@ -26,6 +26,8 @@ ZhihuKeyObject::usage="";
 ZhihuKeyVerify::usage="验证当前 key 的可用性.";
 ZhihuKeyAdd::usage = "";
 ZhihuCookieTransform::usage="ZhihuCookieTransform[cookieraw_] takes a string of cookie and convert it into a List of Association.";
+ZhihuCookiesGetMe::usage="";
+ZhihuCookiesTimeCheck::usage="";
 (* ::Section:: *)
 (*程序包正体*)
 Begin["`Private`"];
@@ -40,6 +42,22 @@ ZhihuCookieTransform[cookieraw_String]:=Flatten@StringCases[
 		"Name"->StringDelete[name," "],
 		"Content"->content
 	|>
+];
+ZhihuCookiesGetMe[cookie_,auth_]:=Block[
+	{req=HTTPRequest[
+		"https://api.zhihu.com/people/self",
+		<|
+			"Headers"-><|"authorization"->auth|>,
+			"Cookies"->cookie,
+			"Query"->{"include"->"gender,voteup_count,follower_count,account_status"}
+		|>]},
+	GeneralUtilities`ToAssociations@URLExecute[req,Authentication->None,Interactive->False]
+]//Quiet;
+ZhihuCookiesTimeCheck[t_]:=Piecewise[
+	{
+		{Text@Style["\[Checkmark] Success!",Darker@Green],QuantityMagnitude@t<3*86400},
+		{Text@Style["\[Chi] Fail !!",Red],QuantityMagnitude@t>86400*25}
+	},Text@Style["¿ Need Refresh",Purple]
 ];
 Format[ZhihuKeyObject[___],OutputForm]:=Print@Style["Illegal Operation!",Darker@Red];
 Format[ZhihuKeyObject[___],InputForm]:=Print@Style["Illegal Operation!",Darker@Red];

@@ -40,7 +40,7 @@ ZhihuConnectCookie[cookie_String]:=Block[
 	{zc0,auth,me,img},
 	zc0=Select[StringSplit[StringDelete[cookie," "],";"],StringTake[#,5]=="z_c0="&];
 	auth="Bearer "<>StringTake[First@zc0,6;;-1];
-	me=CookiesGetMe[cookie,auth];
+	me=ZhihuCookiesGetMe[cookie,auth];
 	Switch[me["error","code"],
 		100,Text@Style["验证失败, 请刷新此 cookie",Darker@Red]//Return,
 		40352,Text@Style["该账号已被限制, 请手动登陆解除限制",Darker@Red]//Return,
@@ -57,7 +57,7 @@ ZhihuConnectCookie[cookie_String]:=Block[
 ];
 ZhihuConnectCookie[cookie_List,auth_String]:=Block[
 	{me,img},
-	me=CookiesGetMe[cookie,auth];
+	me=ZhihuCookiesGetMe[cookie,auth];
 	Switch[me["error","code"],
 		100,Text@Style["验证失败, 请刷新此 cookie",Darker@Red]//Return,
 		40352,Text@Style["该账号已被限制, 请手动登陆解除限制",Darker@Red]//Return,

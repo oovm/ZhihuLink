@@ -18,8 +18,8 @@
 (* ::Section:: *)
 (*函数说明*)
 BeginPackage["ZhihuLinkObject`"];
-ZhihuLinkObject::usage="";
-
+ZhihuLinkUserObject::usage="";
+CookiesGetMe::usage="";
 $ZhihuLinkIcon::usage="";
 (* ::Section:: *)
 (*程序包正体*)
@@ -29,23 +29,6 @@ Begin["`Private`"];
 (*主体代码*)
 (* ::Subsubsection:: *)
 (*ZhihuLinkUserObject*)
-CookiesGetMe[cookie_,auth_]:=Block[
-	{req=HTTPRequest[
-		"https://api.zhihu.com/people/self",
-		<|
-			"Headers"-><|"authorization"->auth|>,
-			"Cookies"->cookie,
-			"Query"->{"include"->"gender,voteup_count,follower_count,account_status"}
-		|>]},
-	GeneralUtilities`ToAssociations@URLExecute[req,Authentication->None,Interactive->False]
-]//Quiet;
-
-CookiesTimeCheck[t_]:=Piecewise[
-	{
-		{Text@Style["\[Checkmark] Success!",Darker@Green],QuantityMagnitude@t<3*86400},
-		{Text@Style["\[Chi] Fail !!",Red],QuantityMagnitude@t>86400*25}
-	},Text@Style["¿ Need Refresh",Purple]
-];
 Format[ZhihuLinkUserObject[___],OutputForm]:="ZhihuLinkUserObject[<>]";
 Format[ZhihuLinkUserObject[___],InputForm]:="ZhihuLinkUserObject[<>]";
 ZhihuLinkUserObjectQ[asc_?AssociationQ]:=AllTrue[{"cookies","auth","user"},KeyExistsQ[asc,#]&];
@@ -55,7 +38,7 @@ ZhihuLinkUserObject/:MakeBoxes[obj:ZhihuLinkUserObject[asc_?ZhihuLinkUserObjectQ
 	above={
 		{BoxForm`SummaryItem[{"KeyID: ",Style[Hash@asc["cookies"], DigitBlock -> 5, NumberSeparator -> "-"]}],SpanFromLeft},
 		{BoxForm`SummaryItem[{"User: ",Text@Style[asc["user"],Darker@Blue]}],SpanFromLeft},
-		{BoxForm`SummaryItem[{"Validity: ",CookiesTimeCheck[Now-asc["time"]]}],SpanFromLeft}
+		{BoxForm`SummaryItem[{"Validity: ",ZhihuCookiesTimeCheck[Now-asc["time"]]}],SpanFromLeft}
 	};
 	below={};
 	BoxForm`ArrangeSummaryBox[
