@@ -103,7 +103,46 @@ ZhihuLinkUserObject[ass_]["Post",ops_List]:=With[
 ];
 (* ::Subsubsection:: *)
 (*ObjectFollow*)
+Follow2DataShort[man_]:=Block[
+	{link=StringReplace[man["url"],"api/v4/"->""]},
+	<|
+		"name"->man["name"],
+		"id"->Hyperlink[man["url_token"],link],
+		"gender"->Switch[man["gender"],
+			1,Style["男",Darker@Blue],
+			0,Style["女",Pink],
+			-1,Style["无",Darker@Green]
+		],
+		"favor"->man["favorited_count"],
+		"fans"->man["follower_count"],
+		"thank"->man["thanked_count"],
+		"vote"->man["voteup_count"]
+	|>
+];
+Options[ObjectFollow]={Take->False,Extension->False,SortBy->"fans"};
+ObjectFollow[name_String,OptionsPattern[]]:=Block[
+	{data},
+	If[OptionValue[Extension],
+		Return["功能未完成"],
 
+		data=ZhihuLinkUserFollowee["GalAster",Save->False,Extension->Min];
+		Follow2DataShort/@data//Dataset
+	]
+];
+ZhihuLinkUserObject[ass_]["Follow"]:=With[
+	{
+		$ZhihuCookie=Lookup[ass,"cookie"],
+		$ZhihuAuth=Lookup[ass,"auth"]
+	},
+	ObjectFollow[Lookup[ass,"user"]];
+];
+ZhihuLinkUserObject[ass_]["Follow",ops_List]:=With[
+	{
+		$ZhihuCookie=Lookup[ass,"cookie"],
+		$ZhihuAuth=Lookup[ass,"auth"]
+	},
+	ObjectFollow@@ops
+];
 
 (* ::Subsubsection:: *)
 (*ObjectFavor*)

@@ -30,11 +30,8 @@ ZhihuKeyLoad::usage="";
 (*主设置*)
 Begin["`Private`"];
 
-
 $ZhihuLinkDirectory=FileNameJoin[{$UserBaseDirectory,"ApplicationData","ZhihuLink"}];
 $ZhihuLinkMarkdown=FileNameJoin[{$UserBaseDirectory,"ApplicationData","HTML2Markdown","Zhihu"}];
-
-
 
 ZhihuConnectCookie[cookie_String]:=Block[
 	{zc0,auth,me,img},
@@ -72,32 +69,44 @@ ZhihuConnectCookie[cookie_List,auth_String]:=Block[
 		"time"->Now
 	|>]
 ];
-ZhihuConnect[id_Integer:1]:=Block[
+Options[ZhihuKey]={Key->"ZhihuLink"};
+ZhihuConnect[id_Integer:1,OptionsPattern[]]:=Block[
 	{cookie,auth,ks,key},
 	If[Head@$ZhihuKeys===Symbol,
 		Text@Style["请先查看你拥有的 Key!",Darker@Red]//Print;
 		Return[$Canceled]
 	];
 	key=ReverseSort[$ZhihuKeys,#["Time"]&][[id]];
-	cookie=key["Key"]["Key"];
+	cookie=Decrypt[OptionValue[Key],key["Key"]["Key"]];
 	auth="Bearer "<>Select[cookie,#["Name"]=="z_c0"&][[1]]["Content"];
 	ZhihuConnectCookie[cookie,auth]
 ];
-Options[ZhihuKeyLoad]={Key->None};
-ZhihuKeyLoad[id_:1,OptionsPattern[]]:=Block[
+ZhihuConnect[key_,OptionsPattern[]]:=Block[
+	{cookie,auth,ks},
+	cookie=Decrypt[OptionValue[Key],key["Key"]];
+	auth="Bearer "<>Select[cookie,#["Name"]=="z_c0"&][[1]]["Content"];
+	ZhihuConnectCookie[cookie,auth]
+];
+Options[ZhihuKeyLoad]={Key->"ZhihuLink"};
+ZhihuKeyLoad[id_Integer:1,OptionsPattern[]]:=Block[
 	{ks,key},
-	$ZhihuKeys=ZhihuKeyImport[Message->False,Key->OptionValue[Key]];
+	$ZhihuKeys=ZhihuKeyImport[];
 	If[$ZhihuKeys===$Failed,
 		Text@Style["你没有已储存的 Key!",Darker@Red]//Print;
 		Return[$Canceled]
 	];
 	ks=ReverseSort[$ZhihuKeys,#["Time"]&];
 	key=Check[ks[[id]],Print@Text@Style["无此编号",Darker@Red];Return[$Canceled]];
-	$ZhihuCookie=key["Key"]["Key"];
+	$ZhihuCookie=Decrypt[OptionValue[Key],key["Key"]["Key"]];
 	$ZhihuAuth="Bearer "<>Select[$ZhihuCookie,#["Name"]=="z_c0"&][[1]]["Content"];
 	Echo[Text@Style[key["ID"],Darker@Green],"当前加载 KeyID: "];
 ];
-
+ZhihuKeyLoad[key_,OptionsPattern[]]:=Block[
+	{},
+	$ZhihuCookie=Decrypt[OptionValue[Key],key["Key"]];
+	$ZhihuAuth="Bearer "<>Select[$ZhihuCookie,#["Name"]=="z_c0"&][[1]]["Content"];
+	Echo[Text@Style[key["ID"],Darker@Green],"当前加载 KeyID: "];
+];
 
 (* ::Subsection::Closed:: *)
 (*附加设置*)

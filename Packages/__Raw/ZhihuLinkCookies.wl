@@ -33,7 +33,10 @@ ZhihuCookiesTimeCheck::usage="";
 Begin["`Private`"];
 (* ::Subsection::Closed:: *)
 (*主体代码*)
-Needs["Authentication`"];
+$Get=(
+	Once@Get["Authentication`"];
+	Once@Get["GeneralUtilities`"];
+);
 (* ::Subsubsection:: *)
 (*ZhihuKeyObject*)
 ZhihuCookieTransform[cookieraw_String]:=Flatten@StringCases[
@@ -56,8 +59,8 @@ ZhihuCookiesGetMe[cookie_,auth_]:=Block[
 ZhihuCookiesTimeCheck[t_]:=Piecewise[
 	{
 		{Text@Style["\[Checkmark] Success!",Darker@Green],QuantityMagnitude@t<3*86400},
-		{Text@Style["\[Chi] Fail !!",Red],QuantityMagnitude@t>86400*25}
-	},Text@Style["¿ Need Refresh",Purple]
+		{Text@Style["\[Times] Fail !!",Red],QuantityMagnitude@t>86400*25}
+	},Text@Style["\[Diameter] Need Refresh",Purple]
 ];
 Format[ZhihuKeyObject[___],OutputForm]:=Print@Style["Illegal Operation!",Darker@Red];
 Format[ZhihuKeyObject[___],InputForm]:=Print@Style["Illegal Operation!",Darker@Red];
@@ -67,14 +70,14 @@ ZhihuKeyObject/:MakeBoxes[obj:ZhihuKeyObject[asc_?ZhihuKeyObjectQ],form:(Standar
 	{above,below},
 	above={
 		{BoxForm`SummaryItem[{"KeyID: ",Style[Hash@asc["Key"],DigitBlock->5,NumberSeparator->"-"]}],SpanFromLeft},
-		{BoxForm`SummaryItem[{"Date: ",asc["Time"]}],SpanFromLeft}
+		{BoxForm`SummaryItem[{"Remark: ",asc["Mark"]}],SpanFromLeft}
 	};
 	below={
 		{BoxForm`SummaryItem[{"Site: ",Hyperlink["https://Zhihu.com"]}],SpanFromLeft},
-		{BoxForm`SummaryItem[{"Remark: ",asc["Mark"]}],SpanFromLeft}
+		{BoxForm`SummaryItem[{"Date: ",asc["Time"]}],SpanFromLeft}
 	};
 	BoxForm`ArrangeSummaryBox[
-		"ZhihuKey",
+		"SecuredAuthenticationKey",
 		obj,
 		Show[Authentication`SecuredAuthenticationKey`PackagePrivate`noauthicon,ImageSize->32],
 		above,
@@ -87,10 +90,10 @@ ZhihuKeyObject[ass_][name_]:=Lookup[ass,name];
 (* ::Subsubsection:: *)
 (*ZhihuKeyObject*)
 ZhihuKeyVerify::usage="Input ANYTHING and check whether it's a valid cookie sequence.";
-ZhihuKeyVerify[cookie_]:=Check[Block[
+ZhihuKeyVerify[cookie_]:=Block[
 	{req,get},
 	Switch[Head@cookie,
-		String,ProcessRawCookie@cookie,
+		String,ZhihuCookieTransform@cookie,
 		List,cookie,
 		ZhihuKeyObject,cookie["Key"],
 		_,Return["UnknowKey"]
@@ -108,36 +111,20 @@ ZhihuKeyVerify[cookie_]:=Check[Block[
 		40352,Print@Text@Style["该账号已被限制, 请手动登陆解除限制",Darker@Red];False,
 		_,True
 	]
-],Print@Text@Style["未知错误",Darker@Red];False];
+];
 (* ::Subsubsection:: *)
 (*Import & Export*)
-Options[ZhihuKeyExport]={Key->None};
-ZhihuKeyExport[ass_,OptionsPattern[]]:=Block[
+ZhihuKeyExport[ass_]:=Block[
 	{file=FileNameJoin[{$ZhihuLinkDirectory,"key.wxf"}]},
 	If[FileExistsQ@file,DeleteFile@file];
-	BinaryWrite[
-		file,
-		BinarySerialize[Encrypt[
-			Switch[OptionValue[Key],
-				None,Uncompress@"1:eJxTTMoPClZmYGAIycgsVgCikoxUhezUSoW0/CKF5Pz87MxUheKS/KLE9FRFACiWDlA=",
-				_,OptionValue[Key]
-			], ass],PerformanceGoal->"Speed"]
-	];
+	BinaryWrite[file,BinarySerialize[$ZhihuKeys,PerformanceGoal->"Speed"]];
 	Close[file];
 ];
-Options[ZhihuKeyImport]={Key->None,Message->True};
-ZhihuKeyImport[OptionsPattern[]]:= Block[
+ZhihuKeyImport[]:= Block[
 	{file=FileNameJoin[{$ZhihuLinkDirectory,"key.wxf"}]},
 	If[FileExistsQ@file,
-		Decrypt[
-			Switch[OptionValue[Key],
-				None,Uncompress@"1:eJxTTMoPClZmYGAIycgsVgCikoxUhezUSoW0/CKF5Pz87MxUheKS/KLE9FRFACiWDlA=",
-				_,OptionValue[Key]
-			],
-			BinaryDeserialize@ByteArray@BinaryReadList@file
-		],
-		If[OptionValue[Message],Print["no such file"];];
-		$Failed
+		BinaryDeserialize@ReadByteArray[file],
+		Print["no such file"];$Failed
 	]
 ];
 
@@ -146,42 +133,45 @@ ZhihuKeyAddDialog[]:=Block[
 	$CookieDialog$=None;
 	$MarkDialog$=None;
 	DialogInput[{
-		TextCell["粘贴你的 Cookies"],InputField[Dynamic@$CookieDialog$,String,FieldSize->100,ImageSize->{400,400/GoldenRatio^2}],
+		TextCell["粘贴你的 Cookies"],
+		Pane[InputField[
+			Dynamic@$CookieDialog$,
+			String,FieldSize->{31,{7,Infinity}},
+			ContinuousAction->True
+		],ImageSize->{400,400/GoldenRatio^2},Scrollbars->{False,True}],
 		TextCell["备注信息,比如可以填你的用户名(可不填)"],
-		InputField[Dynamic@$MarkDialog$,String,FieldSize->32.5]
-		,DefaultButton[DialogReturn["Success"]]
+		InputField[Dynamic@$MarkDialog$,String,FieldSize->32.5],
+		DefaultButton[DialogReturn["Success"]]
 	},WindowTitle->"需要Token"];
 	{$CookieDialog$,$MarkDialog$}
 ];
 
-
-Options[ZhihuKeyAdd]={Key->None,Check->True};
+Options[ZhihuKeyAdd]={Key->"ZhihuLink",Check->True};
 ZhihuKeyAdd[OptionsPattern[]]:=Block[
-	{key,now,ass,cookie,mark},
+	{keyR, now, ass, cookie, mark, keyE},
 	{cookie,mark}=ZhihuKeyAddDialog[];
-	key=ZhihuCookieTransform@cookie;
+	keyR=ZhihuCookieTransform@cookie;
 	If[OptionValue[Check],
-		If[!ZhihuKeyVerify@key,Return[$Failed]];
+		If[!ZhihuKeyVerify@keyR,Return[$Failed]];
 	];
+	keyE=Encrypt[OptionValue[Key],keyR];
 	now=DateString@Now;
 	ass=<|
-		"Key"->ZhihuKeyObject[<|"Key"->key,"Time"->now,"Mark"->mark|>],
-		"ID"->Style[Hash@key,DigitBlock->5,NumberSeparator->"-"],
+		"Key"->ZhihuKeyObject[<|"Key"->keyE,"Time"->now,"Mark"->mark|>],
+		"ID"->Style[Hash@keyR,DigitBlock->5,NumberSeparator->"-"],
 		"Time"->now,
 		"State"->If[OptionValue[Check],
-			Text@Style["\[Checkmark] Verified!",Darker@Green],
-			Text@Style["\[Chi] Unknow",Darker@Red]
+			Style["\[Checkmark] Verified!",Darker@Green],
+			Style["\[Times] Unknow",Darker@Red]
 		],
 		"Mark"->mark
 	|>;
-	If[Head@$ZhihuKeys===Symbol,
-		$ZhihuKeys=ZhihuKeyImport[Message->False,Key->OptionValue[Key]];
-		If[$ZhihuKeys===$Failed,$ZhihuKeys={}]
-	];
-	DeleteDuplicatesBy[Join[$ZhihuKeys,{ass}],#["ID"]&];
-	ZhihuKeyExport[$ZhihuKeys,Key->OptionValue[Key]];
+	$ZhihuKeys=ZhihuKeyImport[];
+	If[$ZhihuKeys===$Failed,$ZhihuKeys={}];
+	$ZhihuKeys=DeleteDuplicatesBy[Join[$ZhihuKeys,{ass}],#["ID"]&];
+	ZhihuKeyExport[$ZhihuKeys];
 	Echo[
-		Text@Style[Hash@key,Darker@Blue,DigitBlock->5,NumberSeparator->"-"],
+		Text@Style[Hash@keyR,Darker@Blue,DigitBlock->5,NumberSeparator->"-"],
 		"Successfully Add:\n"
 	];
 ];
@@ -190,10 +180,9 @@ ZhihuKeyAdd[OptionsPattern[]]:=Block[
 
 (* ::Subsubsection:: *)
 (*ZhihuKeys*)
-Options[ZhihuKeys]={Key->None};
-ZhihuKeys[OptionsPattern[]]:=Block[
+ZhihuKeys[]:=Block[
 	{ks},
-	$ZhihuKeys=ZhihuKeyImport[Message->False,Key->OptionValue[Key]];
+	$ZhihuKeys=ZhihuKeyImport[];
 	If[$ZhihuKeys===$Failed,
 		Text@Style["你没有已储存的 Key!",Darker@Red]//Print;
 		Return[$Canceled]
@@ -201,7 +190,15 @@ ZhihuKeys[OptionsPattern[]]:=Block[
 	ks=ReverseSort[$ZhihuKeys,#["Time"]&];
 	MapIndexed[#1/.ZhihuKeyObject[x_]->First@#2&,ks]//Dataset
 ];
-
+ZhihuKeys["List"]:=Block[
+	{ks},
+	$ZhihuKeys=ZhihuKeyImport[];
+	If[$ZhihuKeys===$Failed,
+		Text@Style["你没有已储存的 Key!",Darker@Red]//Print;
+		Return[$Canceled]
+	];
+	#["Key"]&/@$ZhihuKeys
+];
 
 
 
