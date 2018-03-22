@@ -87,17 +87,17 @@ ObjectPost[user_String,OptionsPattern[]]:=Block[
 	If[OptionValue[Times],Echo[Now-now,"Time Used: "]];
 	Return@data
 ];
-ZhihuLinkUserObject[ass_]["Post"]:=With[
+ZhihuLinkUserObject[ass_]["Post"]:=Block[
 	{
-		$ZhihuCookie=Lookup[ass,"cookie"],
-		$ZhihuAuth=Lookup[ass,"auth"]
+		$ZhihuCookie=ass["cookies"],
+		$ZhihuAuth=ass["auth"]
 	},
-	ObjectPost[Lookup[ass,"user"]];
+	ObjectPost[ass["user"]];
 ];
-ZhihuLinkUserObject[ass_]["Post",ops_List]:=With[
+ZhihuLinkUserObject[ass_]["Post",ops_List]:=Block[
 	{
-		$ZhihuCookie=Lookup[ass,"cookie"],
-		$ZhihuAuth=Lookup[ass,"auth"]
+		$ZhihuCookie=ass["cookies"],
+		$ZhihuAuth=ass["auth"]
 	},
 		ObjectPost@@ops
 ];
@@ -129,14 +129,14 @@ ObjectFollow[name_String,OptionsPattern[]]:=Block[
 		Follow2DataShort/@data//Dataset
 	]
 ];
-ZhihuLinkUserObject[ass_]["Follow"]:=With[
+ZhihuLinkUserObject[ass_]["Follow"]:=Block[
 	{
 		$ZhihuCookie=Lookup[ass,"cookie"],
 		$ZhihuAuth=Lookup[ass,"auth"]
 	},
 	ObjectFollow[Lookup[ass,"user"]];
 ];
-ZhihuLinkUserObject[ass_]["Follow",ops_List]:=With[
+ZhihuLinkUserObject[ass_]["Follow",ops_List]:=Block[
 	{
 		$ZhihuCookie=Lookup[ass,"cookie"],
 		$ZhihuAuth=Lookup[ass,"auth"]

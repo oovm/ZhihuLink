@@ -1,7 +1,7 @@
 (* Created with the Wolfram Language : www.wolfram.com *)
 Paclet[
     Name -> "ZhihuLink",
-    Version -> "0.5.11",
+    Version -> "0.5.15",
     WolframVersion -> "11.0+",
 	Thumbnail -> "ZhihuLinkLogo.png",
     Extensions -> 

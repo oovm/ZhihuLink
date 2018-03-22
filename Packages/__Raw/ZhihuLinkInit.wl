@@ -69,7 +69,7 @@ ZhihuConnectCookie[cookie_List,auth_String]:=Block[
 		"time"->Now
 	|>]
 ];
-Options[ZhihuKey]={Key->"ZhihuLink"};
+Options[ZhihuConnect]={Key->"ZhihuLink"};
 ZhihuConnect[id_Integer:1,OptionsPattern[]]:=Block[
 	{cookie,auth,ks,key},
 	If[Head@$ZhihuKeys===Symbol,
