@@ -57,7 +57,7 @@ ZhihuLinkUserObject/:MakeBoxes[obj:ZhihuLinkUserObject[asc_?ZhihuLinkUserObjectQ
 Answer2Data[post_]:=Block[
 	{title=post["question","title"],qa,link},
 	qa=<|"q"->post["question","id"],"a"->post["id"]|>;
-	link=StringTemplate["https://www.zhihu.com/questions/`q`/answers/`a`"][qa];
+	link=StringTemplate["https://www.zhihu.com/question/`q`/answer/`a`"][qa];
 	<|
 		"title"->Hyperlink[title,link],
 		"vote"->post["voteup_count"],
@@ -74,13 +74,9 @@ Article2Data[post_]:=Block[
 		"created time"->FromUnixTime@post["created"]
 	|>
 ];
-Options[ObjectPost]={SortBy->"vote",Times->True,Save->False};
+Options[ObjectPost]={SortBy->"vote",Times->True};
 ObjectPost[user_String,OptionsPattern[]]:=Block[
 	{ans,art,data,now=Now},
-	If[OptionValue[Save],
-		ZhihuAnswerBackup[user];
-		Return[$ZhihuLinkMarkdown]
-	];
 	ans=ZhihuLinkUserAnswer[user,Save->False,Extension->"data[*].voteup_count,comment_count"];
 	art=ZhihuLinkUserArticle[user,Save->False,Extension->"data[*].voteup_count,comment_count"];
 	data=Reverse@Dataset[Join[Answer2Data/@ans,Article2Data/@art]][SortBy[OptionValue[SortBy]]];
