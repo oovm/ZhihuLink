@@ -166,6 +166,30 @@ $APIURL = <|
 
 		"Followers" -> <|(*关注者*)
 			"Path" -> StringTemplate["api/v4/topics/`id`/followers"]
+		|>,
+
+		"Essence" -> <|(*精华*)
+			"Path" -> StringTemplate["api/v4/topics/`id`/feeds/essence"]
+		|>,
+
+		"TopQuestions" -> <|(*精华问题*)
+			"Path" -> StringTemplate["api/v4/topics/`id`/feeds/top_question"]
+		|>,
+
+		"TimelineQuestions" -> <|(*最新问题*)
+			"Path" -> StringTemplate["api/v4/topics/`id`/feeds/timeline_question"]
+		|>,
+
+		"BestAnswerers" -> <|(*优秀答主*)
+			"Path" -> StringTemplate["api/v4/topics/`id`/best_answerers"]
+		|>,
+
+		"TopActivities" -> <|(*精华动态*)
+			"Path" -> StringTemplate["api/v4/topics/`id`/feeds/top_activity"]
+		|>,
+
+		"TimelineActivities" -> <|(*最新动态*)
+			"Path" -> StringTemplate["api/v4/topics/`id`/feeds/timeline_activity"]
 		|>
 	|>,
 	"Articles" -> <|
