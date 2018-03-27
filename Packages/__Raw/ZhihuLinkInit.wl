@@ -20,46 +20,99 @@
 BeginPackage["ZhihuLinkInit`"];
 (* ::Section:: *)
 (*程序包正体*)
-Needs["GeneralUtilities`"];
-(* ::Subsection::Closed:: *)
-(*主设置*)
 $ZhihuLinkMarkdown::usage = "ZhihuLink 的缓存目录.";
 $ZhihuLinkDirectory::usage = "ZhihuLink 的缓存目录.";
-$ZhihuCookie::usage ="";
-$ZhihuAuth::usage ="";
-ZhihuLinkInit::usage ="";
+$ZhihuCookie::usage = "";
+$ZhihuAuth::usage = "";
+ZhihuConnect::usage="";
+ZhihuKeyLoad::usage="";
+(* ::Subsection::Closed:: *)
+(*主设置*)
 Begin["`Private`"];
+
 $ZhihuLinkDirectory=FileNameJoin[{$UserBaseDirectory,"ApplicationData","ZhihuLink"}];
-ZhihuLinkGetCheck[];
-ZhihuLinkInit[] :=Block[
-	{zc0},
-	$ZhihuCookie = Import[FindFile["zhihu.cookie"]];
-	zc0=Select[StringSplit[StringDelete[$ZhihuCookie," "],";"],StringTake[#,5]=="z_c0="&];
-	$ZhihuAuth="Bearer "<>StringTake[First@zc0,6;;-1];
-];
-
-If[FindFile["zhihu.cookies"] === $Failed,
-	$ZhihuCookies = "";
-	"未检测到 zhihu.cookie 文件\n
-	请使用 ZhihuCookiesReset[] 设置你的cookies.",
-	$ZhihuCookies = Import@FindFile["zhihu.cookie"]
-];
-ZhihuCookiesReset[]:=CreateDialog[{
-	TextCell["粘贴你的Cookies(不需要是字符型)"],
-	InputField[Dynamic[$ZhihuCookies],String,ImageSize->{400,400/GoldenRatio^2}],
-	DefaultButton[DialogReturn[$ZhihuCookies]]
-},
-	WindowTitle->"需要Token"
-];
-
-(*防止未创建缓存文件夹导致的问题*)
-Quiet[CreateDirectory/@{$ZhihuLinkMarkdown}];
 $ZhihuLinkMarkdown=FileNameJoin[{$UserBaseDirectory,"ApplicationData","HTML2Markdown","Zhihu"}];
+
+ZhihuConnectCookie[cookie_String]:=Block[
+	{zc0,auth,me,img},
+	zc0=Select[StringSplit[StringDelete[cookie," "],";"],StringTake[#,5]=="z_c0="&];
+	auth="Bearer "<>StringTake[First@zc0,6;;-1];
+	me=ZhihuCookiesGetMe[cookie,auth];
+	Switch[me["error","code"],
+		100,Text@Style["验证失败, 请刷新此 cookie",Darker@Red]//Return,
+		40352,Text@Style["该账号已被限制, 请手动登陆解除限制",Darker@Red]//Return,
+		_,Text@Style["Login Successfully!",Darker@Green]//Print
+	];
+	img=ImageResize[URLExecute[StringTake[me["avatar_url"],1;;-6]<>"r.jpg","jpg"],52];
+	ZhihuLinkUserObject[<|
+		"cookies"->cookie,
+		"auth"->auth,
+		"user"->me["url_token"],
+		"img"->img,
+		"time"->Now
+	|>]
+];
+ZhihuConnectCookie[cookie_List,auth_String]:=Block[
+	{me,img},
+	me=ZhihuCookiesGetMe[cookie,auth];
+	Switch[me["error","code"],
+		100,Text@Style["验证失败, 请刷新此 cookie",Darker@Red]//Return,
+		40352,Text@Style["该账号已被限制, 请手动登陆解除限制",Darker@Red]//Return,
+		_,Text@Style["Login Successfully!",Darker@Green]//Print
+	];
+	img=ImageResize[URLExecute[StringTake[me["avatar_url"],1;;-6]<>"r.jpg","jpg"],52];
+	ZhihuLinkUserObject[<|
+		"cookies"->cookie,
+		"auth"->auth,
+		"user"->me["url_token"],
+		"img"->img,
+		"time"->Now
+	|>]
+];
+Options[ZhihuConnect]={Key->"ZhihuLink"};
+ZhihuConnect[id_Integer:1,OptionsPattern[]]:=Block[
+	{cookie,auth,ks,key},
+	If[Head@$ZhihuKeys===Symbol,
+		Text@Style["请先查看你拥有的 Key!",Darker@Red]//Print;
+		Return[$Canceled]
+	];
+	key=ReverseSort[$ZhihuKeys,#["Time"]&][[id]];
+	cookie=Decrypt[OptionValue[Key],key["Key"]["Key"]];
+	auth="Bearer "<>Select[cookie,#["Name"]=="z_c0"&][[1]]["Content"];
+	ZhihuConnectCookie[cookie,auth]
+];
+ZhihuConnect[key_,OptionsPattern[]]:=Block[
+	{cookie,auth,ks},
+	cookie=Decrypt[OptionValue[Key],key["Key"]];
+	auth="Bearer "<>Select[cookie,#["Name"]=="z_c0"&][[1]]["Content"];
+	ZhihuConnectCookie[cookie,auth]
+];
+Options[ZhihuKeyLoad]={Key->"ZhihuLink"};
+ZhihuKeyLoad[id_Integer:1,OptionsPattern[]]:=Block[
+	{ks,key},
+	$ZhihuKeys=ZhihuKeyImport[];
+	If[$ZhihuKeys===$Failed,
+		Text@Style["你没有已储存的 Key!",Darker@Red]//Print;
+		Return[$Canceled]
+	];
+	ks=ReverseSort[$ZhihuKeys,#["Time"]&];
+	key=Check[ks[[id]],Print@Text@Style["无此编号",Darker@Red];Return[$Canceled]];
+	$ZhihuCookie=Decrypt[OptionValue[Key],key["Key"]["Key"]];
+	$ZhihuAuth="Bearer "<>Select[$ZhihuCookie,#["Name"]=="z_c0"&][[1]]["Content"];
+	Echo[Text@Style[key["ID"],Darker@Green],"当前加载 KeyID: "];
+];
+ZhihuKeyLoad[key_,OptionsPattern[]]:=Block[
+	{},
+	$ZhihuCookie=Decrypt[OptionValue[Key],key["Key"]];
+	$ZhihuAuth="Bearer "<>Select[$ZhihuCookie,#["Name"]=="z_c0"&][[1]]["Content"];
+	Echo[Text@Style[key["ID"],Darker@Green],"当前加载 KeyID: "];
+];
+
 (* ::Subsection::Closed:: *)
 (*附加设置*)
-End[] ;
+End[];
 SetAttributes[
 	{},
 	{Protected,ReadProtected}
 ];
-EndPackage[];
+EndPackage[]

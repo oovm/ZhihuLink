@@ -1,14 +1,25 @@
 (* ::Package:: *)
-
-(* Wolfram Language Package *)
-
+(* ::Title:: *)
+(*ZhihuLinkGet*)
+(* ::Subchapter:: *)
+(*程序包介绍*)
+(* ::Text:: *)
+(*Mathematica Package*)
 (* Created by the Wolfram Workbench 12 Mar 2018 *)
-
+(**)
+(* ::Text:: *)
+(*Creation Date: 2018-03-12*)
+(*Copyright: Mozilla Public License Version 2.0*)
+(* ::Program:: *)
+(*1.软件产品再发布时包含一份原始许可声明和版权声明。*)
+(*2.提供快速的专利授权。*)
+(*3.不得使用其原始商标。*)
+(*4.如果修改了源代码，包含一份代码修改说明。*)
+(* ::Section:: *)
+(*函数说明*)
 BeginPackage["ZhihuLinkGet`"];
-(* Exported symbols added here with SymbolName::usage *) 
-
-ZhihuLinkGetRaw::usage = "";
-ZhihuLinkGet::usage = "";
+(* Exported symbols added here with SymbolName::usage *)
+ZhihuLinkUser::usage = "";
 ZhihuLinkUserAnswer::usage = "";
 ZhihuLinkUserArticle::usage = "";
 ZhihuLinkUserFollowingFavlist::usage = "";
@@ -17,10 +28,13 @@ ZhihuLinkUserFollowingTopic::usage = "";
 ZhihuLinkUserFollowingQuestion::usage = "";
 ZhihuLinkUserFollower::usage = "";
 ZhihuLinkUserFollowee::usage = "";
-
+(* ::Section:: *)
+(*程序包正体*)
 Begin["`Private`"];
-(* Implementation of the package *)
-
+(* ::Subsection::Closed:: *)
+(*主体代码*)
+(* ::Subsubsection:: *)
+(*$APIURL*)
 $APIURL = <|
 	"Miscellaneous" -> <|
 		"Scheme" -> "https",
@@ -162,7 +176,6 @@ $APIURL = <|
 			"Path" -> StringTemplate["api/posts/`id`/likers"]
 		|>,
 
-
 		"Comments" -> <|(*文章评论*)
 			"Path" -> StringTemplate["api/posts/`id`/comments"]
 		|>
@@ -180,14 +193,14 @@ $APIURL = <|
 		|>
 	|>
 |>;
-
-
+(* ::Subsubsection:: *)
+(*ZhihuLinkGet*)
 ExportJSON[cat_, item_, name_String, content_,
 	OptionsPattern[{"CustomSavePath" -> None}]] :=Module[
 	{path},
 	If[(path = OptionValue["CustomSavePath"]) === None,
 		path = FileNameJoin[{$ZhihuLinkDirectory, cat, item}],
-		path = FileNameJoin[{$ZhihuLinkDir, path}]
+		path = FileNameJoin[{$ZhihuLinkDirectory, path}]
 	];
 	If[! DirectoryQ[path], CreateDirectory[path]];
 	Export[FileNameJoin[{path, name <> ".json"}], content]
@@ -213,24 +226,30 @@ ZhihuLinkGetRaw[cat_String, item_String, id_String,OptionsPattern[]] :=
 			HTTPRequest[<|
 				"Scheme" -> $APIURL[cat]["Scheme"],
 				"Domain" -> $APIURL[cat]["Domain"],
-				"Headers" -> {"authorization" -> $ZhihuLinkAuth}, 
-				"Cookies" -> $ZhihuLinkCookies,
+				"Headers" -> {"authorization" -> $ZhihuAuth},
+				"Cookies" -> $ZhihuCookie,
 				"Path" -> {Evaluate[$APIURL[cat][item]["Path"][<|"id" -> id|>]]},
 				"Query" -> {
 					"limit" -> OptionValue@"limit",
 					"offset" -> OptionValue@"offset",
 					Sequence@@OptionValue["Extension"]
 				}
-			|>], Authentication -> None]
+			|>],
+			Authentication -> None,
+			Interactive -> False
+		]
 	];
 
 ZhihuLinkGetRaw[url_String, OptionsPattern[]] :=
 	GeneralUtilities`ToAssociations[
 		URLExecute[
 			HTTPRequest[url,<|
-				"Headers" -> {"authorization" -> $ZhihuLinkAuth}, 
-				"Cookies" -> $ZhihuLinkCookies
-			|>], Authentication -> None]
+				"Headers" -> {"authorization" -> $ZhihuAuth},
+				"Cookies" -> $ZhihuCookie
+			|>],
+			Authentication -> None,
+			Interactive -> False
+		]
 	];
 
 Options[ZhihuLinkGet] = {
@@ -266,27 +285,53 @@ ZhihuLinkGet[cat_String, item_String, name_String, OptionsPattern[]] := Module[
 		]
 	]
 ];
-
-(* ?????????????????????????????????? *)
-Options[ZhihuLinkUserAnswer]={Extension->None,SortBy->"created",Save->True};
-ZhihuLinkUserAnswer[id_,OptionsPattern[]] := ZhihuLinkGet[
+(* ::Subsubsection:: *)
+(*ZhihuLinkUser*)
+Options[ZhihuLinkUser]={Extension->None,Save->True};
+ZhihuLinkUser[id_,OptionsPattern[]] := ZhihuLinkGet[
 	"Members", "Answers", id,
 	"CustomSavePath" -> "post",
 	"CustomFilename" -> StringTemplate["`id`.answer.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
 	"Extension" -> {
 		Switch[OptionValue[Extension],
 			None,Nothing,
+			Min,"include"->"follower_count,voteup_count,favorited_count,thanked_count",
+			Max,"include"->"follower_count,voteup_count,favorited_count,thanked_count,following_question_count,
+				following_count,answer_count,articles_count,question_count,logs_count,favorite_count,
+				following_favlists_count,columns_count,pins_count",
+			All,"include"->"locations,employments,gender,educations,business,voteup_count,thanked_Count,
+				follower_count,following_count,cover_url,following_topic_count,following_question_count,
+				following_favlists_count,following_columns_count,avatar_hue,answer_count,articles_count,
+				pins_count,question_count,columns_count,commercial_question_count,favorite_count,favorited_count,
+				logs_count,included_answers_count,included_articles_count,included_text,message_thread_token,
+				account_status,is_active,is_bind_phone,is_force_renamed,is_bind_sina,is_privacy_protected,
+				sina_weibo_url,sina_weibo_name,show_sina_weibo,is_blocking,is_blocked,is_following,is_followed,
+				is_org_createpin_white_user,mutual_followees_count,vote_to_count,vote_from_count,thank_to_count,
+				thank_from_count,thanked_count,description,hosted_live_count,participated_live_count,allow_message,
+				industry_category,org_name,org_homepage,badge[?(type=best_answerer)].topics",
+			_,  "include"-> OptionValue[Extension]
+		]
+	},
+	"Save"->OptionValue[Save]
+];
+Options[ZhihuLinkUserAnswer]={Extension->None,SortBy->"created",Save->True};
+ZhihuLinkUserAnswer[id_,OptionsPattern[]] := ZhihuLinkGet[
+	"Members", "Answers", id,
+	"CustomSavePath" -> "post",
+	"CustomFilename" -> StringTemplate["`id`.user.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
+	"Extension" -> {
+		Switch[OptionValue[Extension],
+			None,Nothing,
 			Min,"include"->"data[*].content,voteup_count",
-			All,"include"->"data[*].is_normal,suggest_edit,comment_count,can_comment,
-				content,voteup_count,reshipment_settings,comment_permission,mark_infos,created_time,updated_time,
-				relationship,voting,is_author,is_thanked,is_nothelp,upvoted_followees",
-			_,OptionValue[Extension]
+			All,"include"->"data[*].is_normal,suggest_edit,comment_count,can_comment,content,voteup_count,
+				reshipment_settings,comment_permission,mark_infos,created_time,updated_time,relationship,
+				voting,is_author,is_thanked,is_nothelp,upvoted_followees",
+			_,  "include"->OptionValue[Extension]
 		],
 		"sort_by"->OptionValue[SortBy]
 	},
 	"Save"->OptionValue[Save]
 ];
-
 Options[ZhihuLinkUserArticle]={Extension->None,SortBy->"created",Save->True};
 ZhihuLinkUserArticle[id_,OptionsPattern[]] := ZhihuLinkGet[
 	"Members", "Articles", id,
@@ -296,29 +341,44 @@ ZhihuLinkUserArticle[id_,OptionsPattern[]] := ZhihuLinkGet[
 		Switch[OptionValue[Extension],
 			None,Nothing,
 			Min,"include"->"data[*].content,voteup_count",
-			All,"include"->"data[*].is_normal,suggest_edit,comment_count,can_comment,
-				content,voteup_count,comment_permission,created,updated,
-				voting,upvoted_followees", 
-			_,OptionValue[Extension]
+			All,"include"->"data[*].is_normal,suggest_edit,comment_count,can_comment,content,
+				voteup_count,comment_permission,created,updated,voting,upvoted_followees",
+			_,  "include"->OptionValue[Extension]
 		],
 		"sort_by"->OptionValue[SortBy]
 	},
 	"Save"->OptionValue[Save]
 ];
-
-(*#13*)
-Options[ZhihuLinkUserFollowee]={Save->True};
+(* ::Subsubsection:: *)
+(*ZhihuLinkUserFollow*)
+Options[ZhihuLinkUserFollowee]={Save->True,Extension->None};
 ZhihuLinkUserFollowee[id_,OptionsPattern[]] := ZhihuLinkGet[
 	"Members", "Followees", id,
 	"CustomSavePath" -> "follow",
 	"CustomFilename" -> StringTemplate["`id`.followees.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
+	"Extension" -> {
+		Switch[OptionValue[Extension],
+			None,Nothing,
+			Min,"include"->"data[*].follower_count,voteup_count,favorited_count,thanked_count",
+			All,"include"->"data[*].answer_count", (*todo: filter line 301*)
+			_,  "include"->OptionValue[Extension]
+		]
+	},
 	"Save"->OptionValue[Save]
 ];
-Options[ZhihuLinkUserFollower]={Save->True};
+Options[ZhihuLinkUserFollower]={Save->True,Extension->None};
 ZhihuLinkUserFollower[id_,OptionsPattern[]] := ZhihuLinkGet[
 	"Members", "Followers", id,
 	"CustomSavePath" -> "follow",
 	"CustomFilename" -> StringTemplate["`id`.followers.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
+	"Extension" -> {
+		Switch[OptionValue[Extension],
+			None,Nothing,
+			Min,"include"->"data[*].follower_count,voteup_count,favorited_count,thanked_count",
+			All,"include"->"data[*].answer_count", (*todo: filter line 301*)
+			_,  "include"->OptionValue[Extension]
+		]
+	},
 	"Save"->OptionValue[Save]
 ];
 Options[ZhihuLinkUserFollowingQuestion]={Save->True};
@@ -348,6 +408,11 @@ ZhihuLinkUserFollowingFavlist[id_,OptionsPattern[]] := ZhihuLinkGet[
 	"Save"->OptionValue[Save]
 ];
 
+(* ::Subsection::Closed:: *)
+(*附加设置*)
 End[];
-
+SetAttributes[
+	{},
+	{Protected,ReadProtected}
+];
 EndPackage[]

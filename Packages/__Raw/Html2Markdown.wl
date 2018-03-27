@@ -37,57 +37,45 @@ Options[H2MD]={Module->"Zhihu",Save->False};
 H2MD[input_String,OptionsPattern[]]:=Switch[
 	OptionValue[Module],
 	"Zhihu",
-		ZhihuRule`ZhihuH2MD[input],
+		ZhihuH2MD[input],
 	"Zhuanlan",
-		ZhuanlanRule`ZhuanlanH2MD[input]
+		ZhuanlanH2MD[input]
 ];
 (* ::Subsubsection:: *)
-(*ZhihuRule*)
-Begin["ZhihuRule`"];
-	(*tex 行内公式*)
-	ruleTexline=XMLElement["img",{"src"->__,"alt"->tex__,__},{}]:>StringJoin["$",tex,"$"];
-	(*tex 行间公式*)
-	ruleTexdisplay=XMLElement["p",{},{XMLElement["img",{"src"->__,"alt"->tex__,__},{}]}]:>StringJoin["\n$$",tex,"$$\n"];
-	(*p 段落模式*)
-	rulePara=XMLElement["p",{},{para__}]:>StringJoin["\n",para,"\n"];
-	(*hr 分割线*)
-	ruleHr=XMLElement["hr",{},{}]:>"\n---\n";
-	(*mma 解析异常*)
-	ruleF=XMLElement["figure",{},{}]:>Nothing;
-	(*noscript 渣画质*)
-	ruleS=XMLElement["noscript",___]:>Nothing;
-	(*img 源画质*)
-	ruleImg1=XMLElement["img",{___,"data-original"->img__,___},{}]:>StringJoin["![](",img,")"];
-	ruleImg2=XMLElement["img",{___,"data-actualsrc"->img__,___},{}]:>StringJoin["![](",img,")"];
-	(*引用格式*)
-	ruleLi=XMLElement["li",{},{li__}]:>StringJoin["> ",li,"\n"];
-	ruleUl=XMLElement["ul",{},{ul__}]:>StringJoin["\n",ul,"\n"];
-	ruleBq=XMLElement["blockquote",{},q_]:>StringJoin@Riffle[q,"> ",{1,-1,3}];
-	(*图片下文字*)
-	ruleFc=XMLElement["figcaption",{},{}]:>"\n图注:";
-	(*超链接*)
-	ruleA=XMLElement["a",{___,"href"->url_,___},{f__}]:>StringJoin["[",f,"](",url,")"];
-	(*空行*)
-	ruleBr=XMLElement["br",___]:>"\n";
-	(*代码格式*)
-	ruleCode1=XMLElement["code",___,{__,code_}]:>StringJoin["\n```\n",code,"```\n"];
-	ruleCode2=XMLElement["div",___,{XMLElement["pre",{},{raw_}]}]:>raw;
-	(*EndRules*)
+(*ZhihuH2MD*)
 Options[ZhihuH2MD]={Debug->False};
 ZhihuH2MD[input_String,OptionsPattern[]]:=Block[
 	{xml,yu,body},
 	xml=ImportString[input,{"HTML","XMLObject"}];
-	yu=xml/.{ruleTexdisplay,ruleTexline,ruleImg1,ruleImg2,ruleLi,ruleA,ruleFc,ruleBr,ruleCode1};
-	body=Part[yu/.{rulePara,ruleHr,ruleF,ruleS,ruleUl,ruleCode2,ruleBq},2,3,1];
+	yu=xml/.{
+		XMLElement["p",{},{XMLElement["img",{"src"->__,"alt"->tex__,__},{}]}]:>StringJoin["\n$$",tex,"$$\n"],(*tex 行间公式*)
+		XMLElement["p",{},{para__}]:>StringJoin["\n",para,"\n"],(*tex 行内公式*)
+		XMLElement["img",{___,"data-original"->img__,___},{}]:>StringJoin["![](",img,")"],
+		XMLElement["img",{___,"data-actualsrc"->img__,___},{}]:>StringJoin["![](",img,")"],
+		XMLElement["noscript",___]:>Nothing,
+		XMLElement["li",{},{li__}]:>StringJoin["> ",li,"\n"],
+		XMLElement["a",{___,"href"->url_,___},{f__}]:>StringJoin["[",f,"](",url,")"],
+		XMLElement["figcaption",{},{}]:>"\n图注:",
+		XMLElement["br",___]:>"\n",
+		XMLElement["code",___,{__,code_}]:>StringJoin["\n```\n",code,"```\n"]
+	};
+	body=Part[yu/.{
+		XMLElement["hr",{},{}]:>"\n---\n",
+		XMLElement["figure",{},{}]:>Nothing,
+		XMLElement["ul",{},{ul__}]:>StringJoin["\n",ul,"\n"],
+		XMLElement["div",___,{XMLElement["pre",{},{raw_}]}]:>raw,
+		XMLElement["blockquote",{},q_]:>StringJoin@Riffle[q,"> ",{1,-1,3}]
+	},2,3,1];
 	If[OptionValue[Debug],
 		Return[body],
 		StringJoin[ToString/@body[[3]]]
 	]
 ];
+(* ::Subsection::Closed:: *)
+(*附加设置*)
 End[];
-
-
-
-End[];
-
+SetAttributes[
+	{},
+	{Protected,ReadProtected}
+];
 EndPackage[]

@@ -9,7 +9,8 @@ cd ZhihuLinkTemp
 # 清理非必要文件
 rm -rf .git
 rm -rf .idea
-rm -rf Resources
+rm -rf Resources/Image
+rm -rf Resources/Test
 rm -rf Packages/__Dev
 rm -rf Packages/__Raw
 rm -f .gitignore
