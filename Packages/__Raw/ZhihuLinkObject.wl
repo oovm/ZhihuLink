@@ -74,14 +74,17 @@ Article2Data[post_]:=Block[
 		"created time"->FromUnixTime@post["created"]
 	|>
 ];
-Options[ObjectPost]={SortBy->"vote",Times->True};
+Options[ObjectPost]={SortBy->"vote",Times->True,Take->None};
 ObjectPost[user_String,OptionsPattern[]]:=Block[
 	{ans,art,data,now=Now},
 	ans=ZhihuLinkUserAnswer[user,Save->False,Extension->"data[*].voteup_count,comment_count"];
 	art=ZhihuLinkUserArticle[user,Save->False,Extension->"data[*].voteup_count,comment_count"];
 	data=Reverse@Dataset[Join[Answer2Data/@ans,Article2Data/@art]][SortBy[OptionValue[SortBy]]];
 	If[OptionValue[Times],Echo[Now-now,"Time Used: "]];
-	Return@data
+	If[OptionValue[Take]===None,
+		Return@data,
+		data[All,OptionValue[Take]]//Normal
+	]
 ];
 ZhihuLinkUserObject[ass_]["Post"]:=Block[
 	{
