@@ -146,6 +146,13 @@ ZhihuLinkUserObject[ass_]["Follow",ops_List]:=Block[
 (* ::Subsubsection:: *)
 (*ObjectFavor*)
 
+(* ::Subsubsection:: *)
+(*ObjectBackup*)
+ObjectBackup[name_,OptionsPattern[]]:=Block[
+
+];
+
+
 (* ::Subsection::Closed:: *)
 (*附加设置*)
 End[];
