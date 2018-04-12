@@ -18,7 +18,7 @@
 (* ::Section:: *)
 (*函数说明*)
 BeginPackage["ZhihuLinkObject`"];
-ZhihuLinkUserObject::usage="";
+ZhihuUserObject::usage="";
 CookiesGetMe::usage="";
 $ZhihuLinkIcon::usage="";
 (* ::Section:: *)
@@ -28,12 +28,12 @@ Begin["`Private`"];
 (* ::Subsection::Closed:: *)
 (*主体代码*)
 (* ::Subsubsection:: *)
-(*ZhihuLinkUserObject*)
-Format[ZhihuLinkUserObject[___],OutputForm]:="ZhihuLinkUserObject[<>]";
-Format[ZhihuLinkUserObject[___],InputForm]:="ZhihuLinkUserObject[<>]";
-ZhihuLinkUserObjectQ[asc_?AssociationQ]:=AllTrue[{"cookies","auth","user"},KeyExistsQ[asc,#]&];
-ZhihuLinkUserObjectQ[_]=False;
-ZhihuLinkUserObject/:MakeBoxes[obj:ZhihuLinkUserObject[asc_?ZhihuLinkUserObjectQ],form:(StandardForm|TraditionalForm)]:=Module[
+(*ZhihuUserObject*)
+Format[ZhihuUserObject[___],OutputForm]:="ZhihuUserObject[<>]";
+Format[ZhihuUserObject[___],InputForm]:="ZhihuUserObject[<>]";
+ZhihuUserObjectQ[asc_?AssociationQ]:=AllTrue[{"cookies","auth","user"},KeyExistsQ[asc,#]&];
+ZhihuUserObjectQ[_]=False;
+ZhihuUserObject/:MakeBoxes[obj:ZhihuUserObject[asc_?ZhihuUserObjectQ],form:(StandardForm|TraditionalForm)]:=Module[
 	{above,below},
 	above={
 		{BoxForm`SummaryItem[{"KeyID: ",Style[Hash@asc["cookies"], DigitBlock -> 5, NumberSeparator -> "-"]}],SpanFromLeft},
@@ -77,8 +77,8 @@ Article2Data[post_]:=Block[
 Options[ObjectPost]={SortBy->"vote",Times->True,Take->None};
 ObjectPost[user_String,OptionsPattern[]]:=Block[
 	{ans,art,data,now=Now},
-	ans=ZhihuLinkUserAnswer[user,Save->False,Extension->"data[*].voteup_count,comment_count"];
-	art=ZhihuLinkUserArticle[user,Save->False,Extension->"data[*].voteup_count,comment_count"];
+	ans=ZhihuUserAnswer[user,Save->False,Extension->"data[*].voteup_count,comment_count"];
+	art=ZhihuUserArticle[user,Save->False,Extension->"data[*].voteup_count,comment_count"];
 	data=Reverse@Dataset[Join[Answer2Data/@ans,Article2Data/@art]][SortBy[OptionValue[SortBy]]];
 	If[OptionValue[Times],Echo[Now-now,"Time Used: "]];
 	If[OptionValue[Take]===None,
@@ -86,14 +86,14 @@ ObjectPost[user_String,OptionsPattern[]]:=Block[
 		data[All,OptionValue[Take]]//Normal
 	]
 ];
-ZhihuLinkUserObject[ass_]["Post"]:=Block[
+ZhihuUserObject[ass_]["Post"]:=Block[
 	{
 		$ZhihuCookie=ass["cookies"],
 		$ZhihuAuth=ass["auth"]
 	},
 	ObjectPost[ass["user"]];
 ];
-ZhihuLinkUserObject[ass_]["Post",ops_List]:=Block[
+ZhihuUserObject[ass_]["Post",ops_List]:=Block[
 	{
 		$ZhihuCookie=ass["cookies"],
 		$ZhihuAuth=ass["auth"]
@@ -124,18 +124,18 @@ ObjectFollow[name_String,OptionsPattern[]]:=Block[
 	If[OptionValue[Extension],
 		Return["功能未完成"],
 
-		data=ZhihuLinkUserFollowee["GalAster",Save->False,Extension->Min];
+		data=ZhihuUserFollowee["GalAster",Save->False,Extension->Min];
 		Follow2DataShort/@data//Dataset
 	]
 ];
-ZhihuLinkUserObject[ass_]["Follow"]:=Block[
+ZhihuUserObject[ass_]["Follow"]:=Block[
 	{
 		$ZhihuCookie=Lookup[ass,"cookie"],
 		$ZhihuAuth=Lookup[ass,"auth"]
 	},
 	ObjectFollow[Lookup[ass,"user"]];
 ];
-ZhihuLinkUserObject[ass_]["Follow",ops_List]:=Block[
+ZhihuUserObject[ass_]["Follow",ops_List]:=Block[
 	{
 		$ZhihuCookie=Lookup[ass,"cookie"],
 		$ZhihuAuth=Lookup[ass,"auth"]

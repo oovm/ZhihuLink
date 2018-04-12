@@ -19,15 +19,18 @@
 (*函数说明*)
 BeginPackage["ZhihuLinkGet`"];
 (* Exported symbols added here with SymbolName::usage *)
-ZhihuLinkUser::usage = "";
-ZhihuLinkUserAnswer::usage = "";
-ZhihuLinkUserArticle::usage = "";
-ZhihuLinkUserFollowingFavlist::usage = "";
-ZhihuLinkUserFollowingColumn::usage = "";
-ZhihuLinkUserFollowingTopic::usage = "";
-ZhihuLinkUserFollowingQuestion::usage = "";
-ZhihuLinkUserFollower::usage = "";
-ZhihuLinkUserFollowee::usage = "";
+ZhihuUser::usage = "";
+ZhihuUserAnswer::usage = "";
+ZhihuUserArticle::usage = "";
+ZhihuUserFollowingFavlist::usage = "";
+ZhihuUserFollowingColumn::usage = "";
+ZhihuUserFollowingTopic::usage = "";
+ZhihuUserFollowingQuestion::usage = "";
+ZhihuUserFollower::usage = "";
+ZhihuUserFollowee::usage = "";
+ZhihuTopicFollower::usage = "";
+ZhihuTopicEssence::usage = "";
+ZhihuTopicAnswerer::usage = "";
 (* ::Section:: *)
 (*程序包正体*)
 Begin["`Private`"];
@@ -218,9 +221,8 @@ $APIURL = <|
 	|>
 |>;
 (* ::Subsubsection:: *)
-(*ZhihuLinkGet*)
-ExportJSON[cat_, item_, name_String, content_,
-	OptionsPattern[{"CustomSavePath" -> None}]] :=Module[
+(*ZhihuGet*)
+ExportJSON[cat_, item_, name_String, content_,OptionsPattern[{"CustomSavePath" -> None}]] :=Module[
 	{path},
 	If[(path = OptionValue["CustomSavePath"]) === None,
 		path = FileNameJoin[{$ZhihuLinkDirectory, cat, item}],
@@ -239,12 +241,12 @@ FixURL[url_String,
   
 FixURL[url_String, _, _] := url;
 
-Options[ZhihuLinkGetRaw] = {
+Options[ZhihuGetRaw] = {
 	"offset" -> 0,
 	"limit" -> 20,
 	"Extension" -> Nothing
 };
-ZhihuLinkGetRaw[cat_String, item_String, id_String,OptionsPattern[]] :=
+ZhihuGetRaw[cat_String, item_String, id_String,OptionsPattern[]] :=
 	GeneralUtilities`ToAssociations[
 		URLExecute[
 			HTTPRequest[<|
@@ -264,7 +266,7 @@ ZhihuLinkGetRaw[cat_String, item_String, id_String,OptionsPattern[]] :=
 		]
 	];
 
-ZhihuLinkGetRaw[url_String, OptionsPattern[]] :=
+ZhihuGetRaw[url_String, OptionsPattern[]] :=
 	GeneralUtilities`ToAssociations[
 		URLExecute[
 			HTTPRequest[url,<|
@@ -276,17 +278,17 @@ ZhihuLinkGetRaw[url_String, OptionsPattern[]] :=
 		]
 	];
 
-Options[ZhihuLinkGet] = {
+Options[ZhihuGet] = {
 	"Save" -> True,
 	"CustomSavePath" -> None,
 	"CustomFilename" -> None,
 	"Extension" -> Nothing
 };
-ZhihuLinkGet[cat_String, item_String, name_String, OptionsPattern[]] := Module[
+ZhihuGet[cat_String, item_String, name_String, OptionsPattern[]] := Module[
 	{current, data = {}, exportname, curURL,saveQ = OptionValue["Save"]},
 	(*Not implemented error*)
 	If[! (KeyExistsQ[$APIURL, cat] && KeyExistsQ[$APIURL[cat], item]),Return[$Failed]];
-	current = ZhihuLinkGetRaw[cat, item, name,"Extension" -> OptionValue["Extension"]];
+	current = ZhihuGetRaw[cat, item, name,"Extension" -> OptionValue["Extension"]];
 	If[(exportname = OptionValue["CustomFilename"]) == None,exportname = name];
 	If[! KeyExistsQ[current, "paging"],
 		(*no paging, direct export or save*)
@@ -298,7 +300,7 @@ ZhihuLinkGet[cat_String, item_String, name_String, OptionsPattern[]] := Module[
 		data = Join[data, current["data"]];
 		While[! current["paging"]["is_end"],
 			curURL = FixURL[current["paging"]["next"], cat, item];
-			current = ZhihuLinkGetRaw[curURL];
+			current = ZhihuGetRaw[curURL];
 			If[AssociationQ[current],data = Join[data, current["data"]],
 				Echo[StringTemplate["Unable to read from: `url`."][<|"url" -> curURL|>]]
 			];
@@ -310,12 +312,12 @@ ZhihuLinkGet[cat_String, item_String, name_String, OptionsPattern[]] := Module[
 	]
 ];
 (* ::Subsubsection:: *)
-(*ZhihuLinkUser*)
-Options[ZhihuLinkUser]={Extension->None,Save->True};
-ZhihuLinkUser[id_,OptionsPattern[]] := ZhihuLinkGet[
+(*ZhihuUser*)
+Options[ZhihuUser]={Extension->None,Save->True};
+ZhihuUser[id_,OptionsPattern[]] := ZhihuGet[
 	"Members", "Answers", id,
-	"CustomSavePath" -> "post",
-	"CustomFilename" -> StringTemplate["`id`.answer.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
+	"CustomSavePath" -> "user",
+	"CustomFilename" -> StringTemplate["`id`.user.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
 	"Extension" -> {
 		Switch[OptionValue[Extension],
 			None,Nothing,
@@ -338,8 +340,8 @@ ZhihuLinkUser[id_,OptionsPattern[]] := ZhihuLinkGet[
 	},
 	"Save"->OptionValue[Save]
 ];
-Options[ZhihuLinkUserAnswer]={Extension->None,SortBy->"created",Save->True};
-ZhihuLinkUserAnswer[id_,OptionsPattern[]] := ZhihuLinkGet[
+Options[ZhihuUserAnswer]={Extension->None,SortBy->"created",Save->True};
+ZhihuUserAnswer[id_,OptionsPattern[]] := ZhihuGet[
 	"Members", "Answers", id,
 	"CustomSavePath" -> "post",
 	"CustomFilename" -> StringTemplate["`id`.user.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
@@ -356,8 +358,8 @@ ZhihuLinkUserAnswer[id_,OptionsPattern[]] := ZhihuLinkGet[
 	},
 	"Save"->OptionValue[Save]
 ];
-Options[ZhihuLinkUserArticle]={Extension->None,SortBy->"created",Save->True};
-ZhihuLinkUserArticle[id_,OptionsPattern[]] := ZhihuLinkGet[
+Options[ZhihuUserArticle]={Extension->None,SortBy->"created",Save->True};
+ZhihuUserArticle[id_,OptionsPattern[]] := ZhihuGet[
 	"Members", "Articles", id,
 	"CustomSavePath" -> "post",
 	"CustomFilename" -> StringTemplate["`id`.article.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
@@ -374,9 +376,9 @@ ZhihuLinkUserArticle[id_,OptionsPattern[]] := ZhihuLinkGet[
 	"Save"->OptionValue[Save]
 ];
 (* ::Subsubsection:: *)
-(*ZhihuLinkUserFollow*)
-Options[ZhihuLinkUserFollowee]={Save->True,Extension->None};
-ZhihuLinkUserFollowee[id_,OptionsPattern[]] := ZhihuLinkGet[
+(*ZhihuUserFollow*)
+Options[ZhihuUserFollowee]={Save->True,Extension->None};
+ZhihuUserFollowee[id_,OptionsPattern[]] := ZhihuGet[
 	"Members", "Followees", id,
 	"CustomSavePath" -> "follow",
 	"CustomFilename" -> StringTemplate["`id`.followees.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
@@ -390,8 +392,8 @@ ZhihuLinkUserFollowee[id_,OptionsPattern[]] := ZhihuLinkGet[
 	},
 	"Save"->OptionValue[Save]
 ];
-Options[ZhihuLinkUserFollower]={Save->True,Extension->None};
-ZhihuLinkUserFollower[id_,OptionsPattern[]] := ZhihuLinkGet[
+Options[ZhihuUserFollower]={Save->True,Extension->None};
+ZhihuUserFollower[id_,OptionsPattern[]] := ZhihuGet[
 	"Members", "Followers", id,
 	"CustomSavePath" -> "follow",
 	"CustomFilename" -> StringTemplate["`id`.followers.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
@@ -405,33 +407,54 @@ ZhihuLinkUserFollower[id_,OptionsPattern[]] := ZhihuLinkGet[
 	},
 	"Save"->OptionValue[Save]
 ];
-Options[ZhihuLinkUserFollowingQuestion]={Save->True};
-ZhihuLinkUserFollowingQuestion[id_,OptionsPattern[]] := ZhihuLinkGet["Members", "FollowingQuestions", id,
+Options[ZhihuUserFollowingQuestion]={Save->True};
+ZhihuUserFollowingQuestion[id_,OptionsPattern[]] := ZhihuGet["Members", "FollowingQuestions", id,
 	"CustomSavePath" -> "follow",
 	"CustomFilename" -> StringTemplate["`id`.questions.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
 	"Save"->OptionValue[Save]
 ];
-Options[ZhihuLinkUserFollowingTopic]={Save->True};
-ZhihuLinkUserFollowingTopic[id_,OptionsPattern[]] := ZhihuLinkGet["Members", "FollowingTopics", id,
+Options[ZhihuUserFollowingTopic]={Save->True};
+ZhihuUserFollowingTopic[id_,OptionsPattern[]] := ZhihuGet["Members", "FollowingTopics", id,
 	"CustomSavePath" -> "follow", 
 	"CustomFilename" -> StringTemplate["`id`.topics.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
 	"Save"->OptionValue[Save]
 ];
-Options[ZhihuLinkUserFollowingColumn]={Save->True};
-ZhihuLinkUserFollowingColumn[id_,OptionsPattern[]] := ZhihuLinkGet[
+Options[ZhihuUserFollowingColumn]={Save->True};
+ZhihuUserFollowingColumn[id_,OptionsPattern[]] := ZhihuGet[
 	"Members", "FollowingColumns", id,
 	"CustomSavePath" -> "follow",
 	"CustomFilename" -> StringTemplate["`id`.columns.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
 	"Save"->OptionValue[Save]
 ];
-Options[ZhihuLinkUserFollowingFavlist]={Save->True};
-ZhihuLinkUserFollowingFavlist[id_,OptionsPattern[]] := ZhihuLinkGet[
+Options[ZhihuUserFollowingFavlist]={Save->True};
+ZhihuUserFollowingFavlist[id_,OptionsPattern[]] := ZhihuGet[
 	"Members", "FollowingFavlists", id,
 	"CustomSavePath" -> "follow",
 	"CustomFilename" -> StringTemplate["`id`.favlists.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
 	"Save"->OptionValue[Save]
 ];
-
+(*Topic*)
+Options[ZhihuTopicFollower]={Save->True};
+ZhihuTopicFollower[id_,OptionsPattern[]] := ZhihuGet[
+	"Topics", "Followers", id,
+	"CustomSavePath" -> "topic",
+	"CustomFilename" -> StringTemplate["`id`.followers.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
+	"Save"->OptionValue[Save]
+];
+Options[ZhihuTopicEssence]={Save->True};
+ZhihuTopicEssence[id_,OptionsPattern[]] := ZhihuGet[
+	"Topics", "Essence", id,
+	"CustomSavePath" -> "topic",
+	"CustomFilename" -> StringTemplate["`id`.essence.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
+	"Save"->OptionValue[Save]
+];
+Options[ZhihuTopicAnswerer]={Save->True};
+ZhihuTopicAnswerer[id_,OptionsPattern[]] := ZhihuGet[
+	"Topics", "BestAnswerers", id,
+	"CustomSavePath" -> "topic",
+	"CustomFilename" -> StringTemplate["`id`.answerers.`ts`"][<|"id" -> id, "ts" -> ts[] |>],
+	"Save"->OptionValue[Save]
+];
 (* ::Subsection::Closed:: *)
 (*附加设置*)
 End[];

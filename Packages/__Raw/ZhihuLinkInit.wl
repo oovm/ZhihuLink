@@ -25,7 +25,7 @@ $ZhihuLinkDirectory::usage = "ZhihuLink 的缓存目录.";
 $ZhihuCookie::usage = "";
 $ZhihuAuth::usage = "";
 ZhihuConnect::usage="";
-ZhihuKeyLoad::usage="";
+ZhihuUser::usage="";
 (* ::Subsection::Closed:: *)
 (*主设置*)
 Begin["`Private`"];
@@ -87,8 +87,8 @@ ZhihuConnect[key_,OptionsPattern[]]:=Block[
 	auth="Bearer "<>Select[cookie,#["Name"]=="z_c0"&][[1]]["Content"];
 	ZhihuConnectCookie[cookie,auth]
 ];
-Options[ZhihuKeyLoad]={Key->"ZhihuLink"};
-ZhihuKeyLoad[id_Integer:1,OptionsPattern[]]:=Block[
+Options[ZhihuUser]={Key->"ZhihuLink"};
+ZhihuUser[id_Integer:1,OptionsPattern[]]:=Block[
 	{ks,key},
 	$ZhihuKeys=ZhihuKeyImport[];
 	If[$ZhihuKeys===$Failed,
@@ -101,7 +101,7 @@ ZhihuKeyLoad[id_Integer:1,OptionsPattern[]]:=Block[
 	$ZhihuAuth="Bearer "<>Select[$ZhihuCookie,#["Name"]=="z_c0"&][[1]]["Content"];
 	Echo[Text@Style[key["ID"],Darker@Green],"当前加载 KeyID: "];
 ];
-ZhihuKeyLoad[key_,OptionsPattern[]]:=Block[
+ZhihuUser[key_,OptionsPattern[]]:=Block[
 	{},
 	$ZhihuCookie=Decrypt[OptionValue[Key],key["Key"]];
 	$ZhihuAuth="Bearer "<>Select[$ZhihuCookie,#["Name"]=="z_c0"&][[1]]["Content"];
