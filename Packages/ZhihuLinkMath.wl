@@ -12,7 +12,7 @@
 (* :Keywords: *)
 (* :Discussion: *)
 
-BeginPackage["ZhihuLinkMath`"];
+BeginPackage["`ZhihuLinkMath`"];
 Gini::usage="";
 GiniPlot::usage="";
 Begin["`Private`"];

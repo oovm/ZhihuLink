@@ -12,7 +12,7 @@
 (* :Keywords: *)
 (* :Discussion: *)
 
-BeginPackage["ZhihuLinkBackup`"];
+BeginPackage["`ZhihuLinkBackup`"];
 (* Exported symbols added here with SymbolName::usage *)
 ZhihuAnswerBackup::ussage="";
 ZhihuArticleBackup::ussage="";

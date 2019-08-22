@@ -17,7 +17,7 @@
 (*4.如果修改了源代码，包含一份代码修改说明。*)
 (* ::Section:: *)
 (*函数说明*)
-BeginPackage["ZhihuLinkInit`"];
+BeginPackage["`ZhihuLinkInit`"];
 (* ::Section:: *)
 (*程序包正体*)
 $ZhihuLinkMarkdown::usage = "ZhihuLink 的缓存目录.";

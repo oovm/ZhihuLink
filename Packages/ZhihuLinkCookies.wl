@@ -17,7 +17,7 @@
 (*4.如果修改了源代码，包含一份代码修改说明。*)
 (* ::Section:: *)
 (*函数说明*)
-BeginPackage["ZhihuLinkCookies`"];
+BeginPackage["`ZhihuLinkCookies`"];
 $ZhihuKeys::usage="";
 ZhihuKeys::usage="";
 ZhihuKeyImport::usage="Import cookies from file.";

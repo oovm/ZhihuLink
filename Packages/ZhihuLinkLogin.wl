@@ -12,7 +12,7 @@
 (* :Keywords: *)
 (* :Discussion: *)
 
-BeginPackage["ZhihuLink`"];
+BeginPackage["`ZhihuLink`"];
 (* Exported symbols added here with SymbolName::usage *)
 FirefoxSetCookie::usage="";
 Begin["`Private`"];

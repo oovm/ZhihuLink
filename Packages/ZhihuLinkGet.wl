@@ -17,7 +17,7 @@
 (*4.如果修改了源代码，包含一份代码修改说明。*)
 (* ::Section:: *)
 (*函数说明*)
-BeginPackage["ZhihuLinkGet`"];
+BeginPackage["`ZhihuLinkGet`"];
 (* Exported symbols added here with SymbolName::usage *)
 ZhihuUser::usage = "";
 ZhihuUserAnswer::usage = "";
