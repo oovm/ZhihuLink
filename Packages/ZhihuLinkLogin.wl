@@ -12,10 +12,8 @@
 (* :Keywords: *)
 (* :Discussion: *)
 
-BeginPackage["`ZhihuLink`"];
-(* Exported symbols added here with SymbolName::usage *)
 FirefoxSetCookie::usage="";
-Begin["`Private`"];
+Begin["`ZhihuLink`"];
 (* ::Text:: *)
 (*A bit of all-in-one stuffs*)
 
@@ -27,6 +25,10 @@ FirefoxSetCookie[directory_]:=Quiet@Block[
 		<||>
 	]
 ];
+(* ::Subsection::Closed:: *)
+(*附加设置*)
 End[];
-
-EndPackage[]
+SetAttributes[
+	{},
+	{Protected,ReadProtected}
+];

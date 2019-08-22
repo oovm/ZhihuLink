@@ -12,10 +12,9 @@
 (* :Keywords: *)
 (* :Discussion: *)
 
-BeginPackage["`ZhihuLinkMath`"];
 Gini::usage="";
 GiniPlot::usage="";
-Begin["`Private`"];
+Begin["`ZhihuLinkMath`"];
 
 Gini[dt_List]:=With[
 	{sorted=Accumulate[Sort[dt]],n=N@Length[dt]},
@@ -54,6 +53,10 @@ GiniPlot[raw_List,OptionsPattern[]]:=Block[
 ];
 
 
+(* ::Subsection::Closed:: *)
+(*附加设置*)
 End[];
-
-EndPackage[]
+SetAttributes[
+	{},
+	{Protected,ReadProtected}
+];

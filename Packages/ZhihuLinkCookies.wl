@@ -17,7 +17,6 @@
 (*4.如果修改了源代码，包含一份代码修改说明。*)
 (* ::Section:: *)
 (*函数说明*)
-BeginPackage["`ZhihuLinkCookies`"];
 $ZhihuKeys::usage="";
 ZhihuKeys::usage="";
 ZhihuKeyImport::usage="Import cookies from file.";
@@ -30,7 +29,7 @@ ZhihuCookiesGetMe::usage="";
 ZhihuCookiesTimeCheck::usage="";
 (* ::Section:: *)
 (*程序包正体*)
-Begin["`Private`"];
+Begin["`Html2Markdown`"];
 (* ::Subsection::Closed:: *)
 (*主体代码*)
 $Get=(
@@ -209,4 +208,3 @@ SetAttributes[
 	{},
 	{Protected,ReadProtected}
 ];
-EndPackage[]

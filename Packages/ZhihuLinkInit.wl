@@ -17,7 +17,6 @@
 (*4.如果修改了源代码，包含一份代码修改说明。*)
 (* ::Section:: *)
 (*函数说明*)
-BeginPackage["`ZhihuLinkInit`"];
 (* ::Section:: *)
 (*程序包正体*)
 $ZhihuLinkMarkdown::usage = "ZhihuLink 的缓存目录.";
@@ -28,7 +27,7 @@ ZhihuConnect::usage="";
 ZhihuUser::usage="";
 (* ::Subsection::Closed:: *)
 (*主设置*)
-Begin["`Private`"];
+Begin["`ZhihuLinkInit`"];
 
 $ZhihuLinkDirectory=FileNameJoin[{$UserBaseDirectory,"ApplicationData","ZhihuLink"}];
 $ZhihuLinkMarkdown=FileNameJoin[{$UserBaseDirectory,"ApplicationData","HTML2Markdown","Zhihu"}];
@@ -115,4 +114,3 @@ SetAttributes[
 	{},
 	{Protected,ReadProtected}
 ];
-EndPackage[]

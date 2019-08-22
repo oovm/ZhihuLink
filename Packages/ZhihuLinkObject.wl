@@ -17,14 +17,13 @@
 (*4.如果修改了源代码，包含一份代码修改说明。*)
 (* ::Section:: *)
 (*函数说明*)
-BeginPackage["`ZhihuLinkObject`"];
 ZhihuUserObject::usage="";
 CookiesGetMe::usage="";
 $ZhihuLinkIcon::usage="";
 (* ::Section:: *)
 (*程序包正体*)
 $ZhihuLinkIcon=Import[DirectoryName@FindFile["ZhihuLink`ZhihuLinkLoader`"]<>"ZhihuLinkLogo.png"];
-Begin["`Private`"];
+Begin["`ZhihuLinkObject`"];
 (* ::Subsection::Closed:: *)
 (*主体代码*)
 (* ::Subsubsection:: *)
@@ -160,4 +159,3 @@ SetAttributes[
 	{},
 	{Protected,ReadProtected}
 ];
-EndPackage[]

@@ -17,7 +17,6 @@
 (*4.如果修改了源代码，包含一份代码修改说明。*)
 (* ::Section:: *)
 (*函数说明*)
-BeginPackage["`Html2Markdown`"];
 Html2Markdown::usage = "将HTML转化为Markdown格式的方案集合.";
 H2MD::usage = "将HTML转化为Markdown格式.\r
 	Module->\"Zhihu\", 针对知乎回答的转换方案\r
@@ -28,7 +27,7 @@ $DirectoryH2MD::usage = "打开 Html2Markdown 的缓存目录.";
 XMLShow::usage = "";
 (* ::Section:: *)
 (*程序包正体*)
-Begin["`Private`"];
+Begin["`Html2Markdown`"];
 (* ::Subsection::Closed:: *)
 (*主体代码*)
 $dir=FileNameJoin[{$UserBaseDirectory,"ApplicationData","Html2Markdown"}];
@@ -120,4 +119,3 @@ SetAttributes[
 	{},
 	{Protected,ReadProtected}
 ];
-EndPackage[]

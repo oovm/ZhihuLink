@@ -17,8 +17,6 @@
 (*4.如果修改了源代码，包含一份代码修改说明。*)
 (* ::Section:: *)
 (*函数说明*)
-BeginPackage["`ZhihuLinkGet`"];
-(* Exported symbols added here with SymbolName::usage *)
 ZhihuUser::usage = "";
 ZhihuUserAnswer::usage = "";
 ZhihuUserArticle::usage = "";
@@ -33,7 +31,7 @@ ZhihuTopicEssence::usage = "";
 ZhihuTopicAnswerer::usage = "";
 (* ::Section:: *)
 (*程序包正体*)
-Begin["`Private`"];
+Begin["`ZhihuLinkGet`"];
 (* ::Subsection::Closed:: *)
 (*主体代码*)
 (* ::Subsubsection:: *)
@@ -462,4 +460,3 @@ SetAttributes[
 	{},
 	{Protected,ReadProtected}
 ];
-EndPackage[]

@@ -12,11 +12,9 @@
 (* :Keywords: *)
 (* :Discussion: *)
 
-BeginPackage["`ZhihuLinkBackup`"];
-(* Exported symbols added here with SymbolName::usage *)
 ZhihuAnswerBackup::ussage="";
 ZhihuArticleBackup::ussage="";
-Begin["`Private`"];
+Begin["`ZhihuLinkBackup`"];
 
 Options[Answer2MD]={Debug->False,MetaInformation->True};
 Answer2MD[post_,OptionsPattern[]]:=Block[
@@ -107,6 +105,10 @@ ZhihuArticleBackup[id_String,OptionsPattern[]]:=Block[
 
 
 
+(* ::Subsection::Closed:: *)
+(*附加设置*)
 End[];
-
-EndPackage[]
+SetAttributes[
+	{},
+	{Protected,ReadProtected}
+];
