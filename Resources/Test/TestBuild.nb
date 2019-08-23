@@ -1,0 +1,310 @@
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Build", \
+"Section",ExpressionUUID->"947d2d46-5d9a-4c3d-a6fd-c98909e1bc52"],
+
+Cell[CellGroupData[{
+
+Cell["Now time", \
+"Subsection",ExpressionUUID->"5ad89b23-6476-4c68-9bf9-5ac02676a3dc"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"time", "=", "Now"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"path", "=", 
+   RowBox[{"ParentDirectory", "[", 
+    RowBox[{
+     RowBox[{"NotebookDirectory", "[", "]"}], ",", "2"}], "]"}]}], 
+  ";"}]}], "Input",
+ CellChangeTimes->{{3.729771288439731*^9, 3.729771293051919*^9}, {
+  3.729771365116741*^9, 3.729771365669153*^9}, {3.73011016299809*^9, 
+  3.7301101653627796`*^9}},
+ CellLabel->"In[1]:=",ExpressionUUID->"81a962aa-ee7a-4a96-9ba3-59e0b862bc8c"],
+
+Cell[BoxData[
+ TemplateBox[{RowBox[{"\"Wed 28 Mar 2018 16:04:53\"", 
+     StyleBox[
+      RowBox[{"\"GMT+\"", "\[InvisibleSpace]", 
+        StyleBox["8.`", NumberMarks -> False, StripOnInput -> False]}], 
+      FontColor -> GrayLevel[0.5]]}],RowBox[{"DateObject", "[", 
+     RowBox[{
+       RowBox[{"{", 
+         RowBox[{
+          "2018", ",", "3", ",", "28", ",", "16", ",", "4", ",", 
+           "53.4793262`9.480760771435689"}], "}"}], ",", "\"Instant\"", ",", 
+       "\"Gregorian\"", ",", "8.`"}], "]"}]},
+  "DateObject",
+  Editable->False]], "Output",
+ CellLabel->"Out[1]=",ExpressionUUID->"2862dfae-6030-4456-87ea-26174c6ed751"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["compress_function", \
+"Subsection",ExpressionUUID->"dfa3a148-6713-4db7-be1f-25589706c381"],
+
+Cell[CellGroupData[{
+
+Cell["compress_old", \
+"Subsubsection",ExpressionUUID->"a27cc238-5494-4ae1-9b08-12e666f4aa0a"],
+
+Cell["\<\
+rawPath = FileNameJoin@{path, \"Packages\", \"__Raw\"};
+all = Select[FileNames[\"*\", rawPath], StringPart[#, -1] == \"l\" &];
+dQ = Or @@ {
+     # == \"\",
+     StringPart[#, {1, 2}] === {\"(\", \"*\"} && StringPart[#, {-2, -1}] === \
+{\"*\", \")\"},
+     StringContainsQ[#, \"BeginPackage\" ..] || StringContainsQ[#, \
+\"EndPackage\" ..]
+     } &;
+build[file_] := Block[
+   {mpkg, name},
+   mpkg = DeleteCases[Import[file, \"List\", CharacterEncoding -> \"UTF8\"], \
+_?dQ];
+   name = FileNameJoin@{ParentDirectory@rawPath, FileBaseName[file] <> \".m\"};
+   Export[name, mpkg, \"List\"];
+   Print[FileBaseName[file] <> \" \:521b\:5efa\:5b8c\:6210!\"]
+   ] // Quiet
+build /@ all; // TT\
+\>", "Program",
+ CellLabel->"In[66]:=",ExpressionUUID->"cac4219d-5d77-47bc-800c-de5cde09f989"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["compress_new", \
+"Subsubsection",ExpressionUUID->"f5cba0b4-b803-4b8e-810a-99b9e69ac2d5"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"rawPath", "=", 
+   RowBox[{"FileNameJoin", "@", 
+    RowBox[{"{", 
+     RowBox[{"path", ",", "\"\<Packages\>\"", ",", "\"\<__Raw\>\""}], 
+     "}"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"all", "=", 
+   RowBox[{"Select", "[", 
+    RowBox[{
+     RowBox[{"FileNames", "[", 
+      RowBox[{"\"\<*\>\"", ",", "rawPath"}], "]"}], ",", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"StringPart", "[", 
+        RowBox[{"#", ",", 
+         RowBox[{"-", "1"}]}], "]"}], "\[Equal]", "\"\<l\>\""}], "&"}]}], 
+    "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"ruleD", "=", 
+   RowBox[{"{", "\[IndentingNewLine]", 
+    RowBox[{
+    "\"\<\\n\>\"", ",", "\"\<\\r\>\"", ",", "\"\<\\t\>\"", ",", 
+     "\"\<EndPackage[]\>\"", ",", "\[IndentingNewLine]", 
+     RowBox[{
+     "RegularExpression", "[", "\"\<BeginPackage\\\\[((.*?))\\\\];\>\"", 
+      "]"}], ",", 
+     RowBox[{
+     "RegularExpression", "[", "\"\<\\\\(\\\\*[\\\\w\\\\W]*?\\\\*\\\\)\>\"", 
+      "]"}]}], "\[IndentingNewLine]", "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"ruleR", "=", 
+   RowBox[{"{", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{
+     "\"\<Begin[\\\"`Private`\\\"];\>\"", ":>", 
+      "\"\<\\nBegin[\\\"`Private`\\\"];\\n\>\""}], ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<End[];\>\"", ":>", "\"\<\\nEnd[];\\n\>\""}]}], 
+    "\[IndentingNewLine]", "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"build", "[", "file_", "]"}], ":=", 
+   RowBox[{
+    RowBox[{"Block", "[", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"mpkg", ",", "name"}], "}"}], ",", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"mpkg", "=", 
+        RowBox[{"StringDelete", "[", 
+         RowBox[{
+          RowBox[{"Import", "[", 
+           RowBox[{"file", ",", "\"\<Text\>\""}], "]"}], ",", "ruleD"}], 
+         "]"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"name", "=", 
+        RowBox[{"FileNameJoin", "@", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"ParentDirectory", "@", "rawPath"}], ",", 
+           RowBox[{
+            RowBox[{"FileBaseName", "[", "file", "]"}], "<>", 
+            "\"\<.m\>\""}]}], "}"}]}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"Export", "[", 
+        RowBox[{"name", ",", 
+         RowBox[{"StringReplace", "[", 
+          RowBox[{"mpkg", ",", "ruleR"}], "]"}], ",", "\"\<String\>\""}], 
+        "]"}], ";", "\[IndentingNewLine]", 
+       RowBox[{"Print", "[", 
+        RowBox[{"\"\<Building: \>\"", "<>", 
+         RowBox[{"FileBaseName", "[", "file", "]"}]}], "]"}]}]}], 
+     "\[IndentingNewLine]", "]"}], "//", "Quiet"}]}], ";"}]}], "Input",
+ CellLabel->"In[3]:=",ExpressionUUID->"76204b36-43ca-45f5-b511-80cb8e4c012e"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["pack_function", \
+"Subsection",ExpressionUUID->"bd41a9bf-1d30-409d-ac3b-15513bc0adf5"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"info", "=", 
+   RowBox[{"FileNameJoin", "@", 
+    RowBox[{"{", 
+     RowBox[{"path", ",", "\"\<PacletInfo.m\>\""}], "}"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"foo", "=", 
+   RowBox[{
+    RowBox[{"StringReplace", "[", 
+     RowBox[{"#", ",", 
+      RowBox[{
+       RowBox[{"\"\<.\>\"", "~~", 
+        RowBox[{"n", ":", 
+         RowBox[{"DigitCharacter", ".."}]}], "~~", "\"\<\\\"\>\""}], 
+       "\[RuleDelayed]", 
+       RowBox[{"\"\<.\>\"", "~~", 
+        RowBox[{"ToString", "[", 
+         RowBox[{
+          RowBox[{"ToExpression", "[", "n", "]"}], "+", "1"}], "]"}], "~~", 
+        "\"\<\\\"\>\""}]}]}], "]"}], "&"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"infoN", "=", 
+   RowBox[{"StringReplace", "[", 
+    RowBox[{
+     RowBox[{"Import", "[", 
+      RowBox[{"info", ",", "\"\<String\>\""}], "]"}], ",", 
+     RowBox[{
+      RowBox[{"\"\<Version\>\"", "~~", "x__", "~~", "\"\<\\\",\>\""}], 
+      "\[RuleDelayed]", 
+      RowBox[{"\"\<Version\>\"", "~~", 
+       RowBox[{"foo", "[", "x", "]"}], "~~", "\"\<\\\",\>\""}]}]}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"Export", "[", 
+   RowBox[{"info", ",", "infoN", ",", "\"\<String\>\""}], "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"SystemOpen", "[", 
+     RowBox[{"DirectoryName", "[", 
+      RowBox[{"AbsoluteFileName", "[", "paclet", "]"}], "]"}], "]"}], ";"}], 
+   "*)"}]}]}], "Input",
+ CellLabel->"In[8]:=",ExpressionUUID->"0eca65f5-421d-4952-8f93-6a9d2a140173"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["# Run Build", \
+"Subsection",ExpressionUUID->"0c542b7f-68a7-4338-be2a-c513d5ab101d"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"build", " ", "/@", " ", "all"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"paclet", "=", 
+   RowBox[{"PackPaclet", "@", "path"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"FileBaseName", "[", "#", "]"}], "<>", 
+    RowBox[{"FileExtension", "[", "#", "]"}]}], "&"}], "[", "paclet", 
+  "]"}]}], "Input",
+ CellLabel->"In[12]:=",ExpressionUUID->"d067c60a-39b3-425a-9e72-6873869cb1d8"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"Building: Html2Markdown\"\>"], "Print",
+ CellLabel->
+  "\:6b63\:5728\:8ba1\:7b97In[12]:=",ExpressionUUID->"34326987-e806-4b78-bf43-\
+a3f441250c36"],
+
+Cell[BoxData["\<\"Building: ZhihuLinkBackup\"\>"], "Print",
+ CellLabel->
+  "\:6b63\:5728\:8ba1\:7b97In[12]:=",ExpressionUUID->"89928afe-b1e8-4a4b-b4fa-\
+882814d53091"],
+
+Cell[BoxData["\<\"Building: ZhihuLinkCookies\"\>"], "Print",
+ CellLabel->
+  "\:6b63\:5728\:8ba1\:7b97In[12]:=",ExpressionUUID->"ac696ab1-7cc3-4bde-b48c-\
+e8d92b372bd0"],
+
+Cell[BoxData["\<\"Building: ZhihuLinkGet\"\>"], "Print",
+ CellLabel->
+  "\:6b63\:5728\:8ba1\:7b97In[12]:=",ExpressionUUID->"244a293a-7289-40b2-882b-\
+011a8f41b53a"],
+
+Cell[BoxData["\<\"Building: ZhihuLinkInit\"\>"], "Print",
+ CellLabel->
+  "\:6b63\:5728\:8ba1\:7b97In[12]:=",ExpressionUUID->"a75d9b6f-086e-4e3e-878a-\
+377b275df790"],
+
+Cell[BoxData["\<\"Building: ZhihuLinkLogin\"\>"], "Print",
+ CellLabel->
+  "\:6b63\:5728\:8ba1\:7b97In[12]:=",ExpressionUUID->"df0211c0-2d47-4451-bc30-\
+53a345018267"],
+
+Cell[BoxData["\<\"Building: ZhihuLinkMath\"\>"], "Print",
+ CellLabel->
+  "\:6b63\:5728\:8ba1\:7b97In[12]:=",ExpressionUUID->"75e11e33-2b81-4862-89fa-\
+3261c16aece8"],
+
+Cell[BoxData["\<\"Building: ZhihuLinkObject\"\>"], "Print",
+ CellLabel->
+  "\:6b63\:5728\:8ba1\:7b97In[12]:=",ExpressionUUID->"5e0bf797-3e21-4f84-9a7c-\
+98df20b9c86a"]
+}, Open  ]],
+
+Cell[BoxData["\<\"ZhihuLink-0.5.21paclet\"\>"], "Output",
+ CellLabel->"Out[14]=",ExpressionUUID->"07b5954e-7b9b-4f71-9405-8ccc8fc8cd5a"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Echo", "[", 
+   RowBox[{
+    RowBox[{"Now", "-", "time"}], ",", "\"\<Time used: \>\""}], "]"}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.730101440514496*^9, 3.730101473242628*^9}},
+ CellLabel->"In[15]:=",ExpressionUUID->"7a454ee7-1c78-4e4d-b243-838f0c4e73f8"],
+
+Cell[BoxData[
+ RowBox[{
+  TagBox["\<\"Time used: \"\>",
+   "EchoLabel"], " ", 
+  TemplateBox[{"0.7855563`","\"s\"","seconds","\"Seconds\""},
+   "Quantity"]}]], \
+"Echo",ExpressionUUID->"1014cadc-24cb-446f-8307-bd1563d514f4"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{775, 778},
+WindowMargins->{{22, Automatic}, {Automatic, 76}},
+PrivateNotebookOptions->{"FileOutlineCache"->False},
+TrackCellChangeTimes->False,
+FrontEndVersion->"11.3 for Microsoft Windows (64-bit) (2018\:5e743\:67086\
+\:65e5)",
+StyleDefinitions->FrontEnd`FileName[{"Wolfram"}, "ProgrammingLabDefault.nb", 
+  CharacterEncoding -> "UTF-8"]
+]
+

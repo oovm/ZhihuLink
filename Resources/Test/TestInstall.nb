@@ -1,0 +1,133 @@
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[{
+ RowBox[{"time", "=", "Now"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"path", "=", 
+   RowBox[{"ParentDirectory", "[", 
+    RowBox[{
+     RowBox[{"NotebookDirectory", "[", "]"}], ",", "3"}], "]"}]}], 
+  ";"}]}], "Input",
+ CellChangeTimes->{{3.730109968767247*^9, 3.730109970051154*^9}, 
+   3.7301103413423653`*^9},
+ CellLabel->
+  "In[184]:=",ExpressionUUID->"7fc6acef-9744-421c-b3ad-e8c57c732be1"],
+
+Cell[BoxData[
+ TemplateBox[{RowBox[{"\"Thu 15 Mar 2018 21:57:33\"", 
+     StyleBox[
+      RowBox[{"\"GMT+\"", "\[InvisibleSpace]", 
+        StyleBox["8.`", NumberMarks -> False, StripOnInput -> False]}], 
+      FontColor -> GrayLevel[0.5]]}],RowBox[{"DateObject", "[", 
+     RowBox[{
+       RowBox[{"{", 
+         RowBox[{
+          "2018", ",", "3", ",", "15", ",", "21", ",", "57", ",", 
+           "33.0439234`9.271666505893375"}], "}"}], ",", "\"Instant\"", ",", 
+       "\"Gregorian\"", ",", "8.`"}], "]"}]},
+  "DateObject",
+  Editable->False]], "Output",
+ CellChangeTimes->{3.730109970672615*^9, 3.7301103370683384`*^9, 
+  3.730110751206599*^9, 3.7301108265008125`*^9, 3.730111053060934*^9},
+ CellLabel->"Out[184]=",ExpressionUUID->"ffea7e78-bce7-48a7-acad-f0d9d40a6b0b"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"paclets", "=", 
+   RowBox[{"FileNames", "[", 
+    RowBox[{"\"\<ZhihuLink*.paclet\>\"", ",", "path"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Echo", "[", 
+   RowBox[{
+    RowBox[{"paclets", "//", "Length"}], ",", 
+    "\"\<\:5b89\:88c5\:5305\:6570:\>\""}], "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"iv", "=", 
+   RowBox[{
+    RowBox[{"SortBy", "[", 
+     RowBox[{"paclets", ",", 
+      RowBox[{
+       RowBox[{"ToExpression", "[", 
+        RowBox[{
+         RowBox[{"StringSplit", "[", 
+          RowBox[{"#", ",", 
+           RowBox[{"{", 
+            RowBox[{"\"\<-\>\"", ",", "\"\<.\>\""}], "}"}]}], "]"}], "[", 
+         RowBox[{"[", 
+          RowBox[{"-", "2"}], "]"}], "]"}], "]"}], "&"}]}], "]"}], "//", 
+    "Last"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"PacletInstall", "[", 
+  RowBox[{"iv", ",", 
+   RowBox[{"IgnoreVersion", "\[Rule]", "True"}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.730109980226349*^9, 3.7301100090347085`*^9}, {
+   3.73011034897075*^9, 3.730110382661562*^9}, {3.7301104474523535`*^9, 
+   3.7301104843064013`*^9}, {3.730110570850566*^9, 3.730110571091737*^9}, 
+   3.730110628005962*^9},
+ NumberMarks->False,
+ CellLabel->
+  "In[186]:=",ExpressionUUID->"6584c7db-6123-4a17-99f8-60e50d6145bd"],
+
+Cell[BoxData[
+ RowBox[{
+  TagBox["\<\"\:5b89\:88c5\:5305\:6570:\"\>",
+   "EchoLabel"], " ", "5"}]], "Echo",
+ CellChangeTimes->{
+  3.7301110531479974`*^9},ExpressionUUID->"4283009e-b666-4e5e-8d1b-\
+dd547b737ba3"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+  "Paclet", "[", "\<\"ZhihuLink\"\>", ",", "\<\"0.1.12\"\>", ",", "<>", "]"}],
+  PacletManager`Paclet[
+  "Name" -> "ZhihuLink", "Version" -> "0.1.12", "WolframVersion" -> "11.3+", 
+   "Root" -> ".", "Internal" -> False, "SystemID" -> All, 
+   "Extensions" -> {{"Kernel", "Root" -> ".", "Context" -> "ZhihuLink`"}, {
+     "Documentation", "Language" -> "English"}, {"LibraryLink"}}, "Location" -> 
+   "C:\\Users\\28059\\AppData\\Roaming\\Mathematica\\Paclets\\Repository\\\
+ZhihuLink-0.1.12"]]], "Output",
+ CellChangeTimes->{
+  3.7301105718182635`*^9, {3.730110629279862*^9, 3.7301106304396954`*^9}, {
+   3.7301107466984105`*^9, 3.730110751802039*^9}, {3.730110817264285*^9, 
+   3.7301108270832233`*^9}, 3.730111053638344*^9},
+ CellLabel->"Out[189]=",ExpressionUUID->"2e52ee09-1d64-4aa2-af16-3f9529bfd111"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Get", "[", "\"\<ZhihuLink`\>\"", "]"}]], "Input",
+ CellChangeTimes->{{3.7301107551934376`*^9, 3.7301107671048317`*^9}, {
+  3.730110837958911*^9, 3.730110852301052*^9}},
+ CellLabel->
+  "In[191]:=",ExpressionUUID->"76295845-024c-4d2e-8e3d-bb45472e3863"],
+
+Cell[BoxData[
+ TemplateBox[{
+  "Import","chtype",
+   "\"First argument \\!\\(\\*RowBox[{\\\"None\\\"}]\\) is not a valid file, \
+directory, or URL specification.\"",2,191,30,32091309312250132498,"Local"},
+  "MessageTemplate"]], "Message", "MSG",
+ CellChangeTimes->{{3.7301107616539803`*^9, 3.7301107686939692`*^9}, {
+  3.7301108271442795`*^9, 3.730110852772381*^9}, {3.730111053698386*^9, 
+  3.7301110569346733`*^9}},
+ CellLabel->
+  "\:6b63\:5728\:8ba1\:7b97In[191]:=",ExpressionUUID->"41a0871f-cbb7-486e-\
+b0fc-b3dd23431845"]
+}, Open  ]]
+},
+WindowSize->{775, 872},
+WindowMargins->{{Automatic, 111}, {-22, Automatic}},
+PrivateNotebookOptions->{"FileOutlineCache"->False},
+TrackCellChangeTimes->False,
+FrontEndVersion->"11.3 for Microsoft Windows (64-bit) (2018\:5e743\:67086\
+\:65e5)",
+StyleDefinitions->"Default.nb"
+]
+
