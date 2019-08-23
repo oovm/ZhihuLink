@@ -1,3 +1,5 @@
+(* ::Package:: *)
+
 (* Mathematica Package *)
 (* Created by Mathematica Plugin for IntelliJ IDEA *)
 
@@ -12,23 +14,29 @@
 (* :Keywords: *)
 (* :Discussion: *)
 
-FirefoxSetCookie::usage="";
+FirefoxSetCookie::usage = "";
 Begin["`ZhihuLink`"];
+
+
 (* ::Text:: *)
 (*A bit of all-in-one stuffs*)
 
 
-FirefoxSetCookie[directory_]:=Quiet@Block[
+FirefoxSetCookie[directory_] := Quiet@Block[
 	{temp},
-	If[SetFirefoxDirectory[directory]=!=$Failed&&Quiet[Check[EstablishCookieSQLConnection[];temp=GetCookies[],$Failed]]=!=$Failed&&VerifyCookieStatus[temp],
+	If[SetFirefoxDirectory[directory] =!= $Failed && Quiet[Check[EstablishCookieSQLConnection[];temp = GetCookies[], $Failed]] =!= $Failed && VerifyCookieStatus[temp],
 		temp,
 		<||>
 	]
 ];
+
+
 (* ::Subsection::Closed:: *)
 (*附加设置*)
+
+
 End[];
 SetAttributes[
 	{},
-	{Protected,ReadProtected}
+	{Protected, ReadProtected}
 ];
