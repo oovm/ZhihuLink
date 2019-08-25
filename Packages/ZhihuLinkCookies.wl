@@ -82,9 +82,9 @@ ZhihuCookiesGetMe[cookie_, auth_] := Block[
 ] // Quiet;
 ZhihuCookiesTimeCheck[t_] := Piecewise[
 	{
-		{Text@Style["\[Checkmark] Success!", Darker@Green], QuantityMagnitude@t < 3 * 86400},
-		{Text@Style["\[Times] Fail !!", Red], QuantityMagnitude@t > 86400 * 25}
-	}, Text@Style["\[Diameter] Need Refresh", Purple]
+		{Text@Style["✓ Success!", Darker@Green], QuantityMagnitude@t < 3 * 86400},
+		{Text@Style["$Failed Fail !!", Red], QuantityMagnitude@t > 86400 * 25}
+	}, Text@Style["⌀ Need Refresh", Purple]
 ];
 Format[ZhihuKeyObject[___], OutputForm] := Print@Style["Illegal Operation!", Darker@Red];
 Format[ZhihuKeyObject[___], InputForm] := Print@Style["Illegal Operation!", Darker@Red];
@@ -193,8 +193,8 @@ ZhihuKeyAdd[OptionsPattern[]] := Block[
 		"ID" -> Style[Hash@keyR, DigitBlock -> 5, NumberSeparator -> "-"],
 		"Time" -> now,
 		"State" -> If[OptionValue[Check],
-			Style["\[Checkmark] Verified!", Darker@Green],
-			Style["\[Times] Unknow", Darker@Red]
+			Style["✓ Verified!", Darker@Green],
+			Style["$Failed Unknow", Darker@Red]
 		],
 		"Mark" -> mark
 	|>;
