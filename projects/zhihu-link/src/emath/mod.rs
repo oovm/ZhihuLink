@@ -54,8 +54,8 @@ impl EMathDissussion {
         Ok(resp.text().await?)
     }
     pub fn save<P>(&self, path: P) -> MarkResult<()>
-    where
-        P: AsRef<Path>,
+        where
+            P: AsRef<Path>,
     {
         let mut file = std::fs::File::create(path)?;
         file.write_all(self.to_string().as_bytes())?;
@@ -69,12 +69,12 @@ impl EMathDissussion {
         Ok(())
     }
     fn extract_title(&mut self, html: &Html) -> MarkResult<()> {
-        let selector = Selector::new("span#thread_subject");
+        let selector = Selector::parse("span#thread_subject").unwrap();
         self.title = select_text(html, &selector).unwrap_or_default();
         Ok(())
     }
     fn extract_description(&mut self, html: &Html) -> MarkResult<()> {
-        let selector = Selector::new("div.QuestionRichText");
+        let selector = Selector::parse("div.??").unwrap();
         let _: Option<_> = try {
             for node in html.select(&selector) {
                 let text = node.first_child()?.as_text()?;
@@ -85,7 +85,7 @@ impl EMathDissussion {
     }
     fn extract_content(&mut self, html: &Html) -> MarkResult<()> {
         // div.RichContent-inner
-        let selector = Selector::new("td.t_f");
+        let selector = Selector::parse("td.t_f").unwrap();
         for post in html.select(&selector) {
             for child in post.children() {
                 self.read_content_node(child)?;
@@ -116,17 +116,13 @@ impl EMathDissussion {
                     "div" => {
                         if e.has_class("attach_tips") {
                             // do nothing
-                        }
-                        else if e.has_class("tip") {
+                        } else if e.has_class("tip") {
                             // do nothing
-                        }
-                        else if e.has_class("quote") {
+                        } else if e.has_class("quote") {
                             // do nothing
-                        }
-                        else if e.has_class("blockcode") {
+                        } else if e.has_class("blockcode") {
                             self.extract_code_block(node)?
-                        }
-                        else {
+                        } else {
                             println!("{:?}", e);
                             println!("{:?}", node.text().collect::<String>())
                         }
@@ -162,8 +158,7 @@ impl EMathDissussion {
                     "i" => {
                         if e.has_class("pstatus") {
                             // do nothing
-                        }
-                        else {
+                        } else {
                             println!("{:?}", e);
                             println!("{:?}", node.text().collect::<String>())
                         }
@@ -205,7 +200,7 @@ impl EMathDissussion {
         Ok(())
     }
     fn extract_code_block(&mut self, node: Node) -> MarkResult<()> {
-        let selector = Selector::new("li");
+        let selector = Selector::parse("li").unwrap();
         write!(self.content, "```\n")?;
         for child in node.select(&selector) {
             match child.first_child().and_then(|s| s.as_text()) {

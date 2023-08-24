@@ -8,6 +8,7 @@ use std::{
     str::FromStr,
     sync::LazyLock,
 };
+use super::*;
 
 #[derive(Debug)]
 pub struct ZhihuArticle {
@@ -36,8 +37,8 @@ impl FromStr for ZhihuArticle {
         Ok(empty)
     }
 }
-static SELECT_TITLE: LazyLock<Selector> = LazyLock::new(|| Selector::new("h1.Post-Title"));
-static SELECT_CONTENT: LazyLock<Selector> = LazyLock::new(|| Selector::new("script#js-initialData"));
+static SELECT_TITLE: LazyLock<Selector> = LazyLock::new(|| Selector::parse("h1.Post-Title").unwrap());
+static SELECT_CONTENT: LazyLock<Selector> = LazyLock::new(|| Selector::parse("script#js-initialData").unwrap());
 
 // script#js-initialData
 
@@ -80,9 +81,8 @@ impl ZhihuArticle {
         Ok(())
     }
     fn extract_description(&mut self, html: &Html) -> MarkResult<()> {
-        let selector = Selector::new("div.QuestionRichText");
         let _: Option<_> = try {
-            for node in html.select(&selector) {
+            for node in html.select(&QUESTION_RICH_TEXT) {
                 let text = node.first_child()?.as_text()?;
                 println!("text: {:?}", text);
             }

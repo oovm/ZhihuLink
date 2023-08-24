@@ -37,8 +37,13 @@ impl FromStr for BilibiliArticle {
         Ok(empty)
     }
 }
-static SELECT_TITLE: LazyLock<Selector> = LazyLock::new(|| Selector::new("p.inner-title"));
-static SELECT_CONTENT: LazyLock<Selector> = LazyLock::new(|| Selector::new("div.read-article-holder"));
+
+static SELECT_TITLE: LazyLock<Selector> = LazyLock::new(|| Selector::parse("p.inner-title").unwrap());
+static SELECT_CONTENT: LazyLock<Selector> = LazyLock::new(|| Selector::parse("div.read-article-holder").unwrap());
+
+
+static QUESTION_RICH_TEXT: LazyLock<Selector> = LazyLock::new(|| Selector::parse("div.QuestionRichText").unwrap());
+
 
 // script#js-initialData
 
@@ -61,8 +66,8 @@ impl BilibiliArticle {
         Ok(resp.text().await?)
     }
     pub fn save<P>(&self, path: P) -> MarkResult<()>
-    where
-        P: AsRef<Path>,
+        where
+            P: AsRef<Path>,
     {
         save_string(path, &self.to_string())
     }
@@ -79,9 +84,8 @@ impl BilibiliArticle {
         Ok(())
     }
     fn extract_description(&mut self, html: &Html) -> MarkResult<()> {
-        let selector = Selector::new("div.QuestionRichText");
         let _: Option<_> = try {
-            for node in html.select(&selector) {
+            for node in html.select(&QUESTION_RICH_TEXT) {
                 let text = node.first_child()?.as_text()?;
                 println!("text: {:?}", text);
             }

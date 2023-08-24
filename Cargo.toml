@@ -6,6 +6,7 @@ default-members = [
 ]
 exclude = [
     "projects/.DS_Store",
+    "projects/zhihu-wolfram",
 ]
 
 [profile.release]

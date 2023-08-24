@@ -6,6 +6,7 @@ use std::{
     path::Path,
     str::FromStr,
 };
+use super::*;
 
 #[derive(Debug)]
 pub struct ZhihuAnswer {
@@ -54,8 +55,8 @@ impl ZhihuAnswer {
         Ok(resp.text().await?)
     }
     pub fn save<P>(&self, path: P) -> MarkResult<()>
-    where
-        P: AsRef<Path>,
+        where
+            P: AsRef<Path>,
     {
         let mut file = std::fs::File::create(path)?;
         file.write_all(self.to_string().as_bytes())?;
@@ -69,7 +70,7 @@ impl ZhihuAnswer {
         Ok(())
     }
     fn extract_title(&mut self, html: &Html) -> MarkResult<()> {
-        let selector = Selector::new("h1.QuestionHeader-title");
+        let selector = Selector::parse("h1.QuestionHeader-title").unwrap();
         let _: Option<_> = try {
             let node = html.select(&selector).next()?;
             let text = node.first_child()?.as_text()?;
@@ -78,9 +79,8 @@ impl ZhihuAnswer {
         Ok(())
     }
     fn extract_description(&mut self, html: &Html) -> MarkResult<()> {
-        let selector = Selector::new("div.QuestionRichText");
         let _: Option<_> = try {
-            for node in html.select(&selector) {
+            for node in html.select(&QUESTION_RICH_TEXT) {
                 let text = node.first_child()?.as_text()?;
                 println!("text: {:?}", text);
             }
@@ -89,7 +89,7 @@ impl ZhihuAnswer {
     }
     fn extract_content(&mut self, html: &Html) -> MarkResult<()> {
         // div.RichContent-inner
-        let selector = Selector::new("span.CopyrightRichText-richText");
+        let selector = Selector::parse("span.CopyrightRichText-richText").unwrap();
         let _: Option<_> = try {
             let node = html.select(&selector).next()?;
             for child in node.children() {
