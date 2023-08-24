@@ -1,7 +1,16 @@
-# idea 配置文件
-*.iml
-.idea/*
+# OS
+.DS_Store/
+thumbs.db
+time-travel.*
 
-*.nb
-!Kernel/*.nb
-!Resources/test/*.nb
+# IDE
+.vscode/
+.vs/
+.idea/
+*.iml
+
+# Rust
+target/
+Cargo.lock
+*.html
+test.md
